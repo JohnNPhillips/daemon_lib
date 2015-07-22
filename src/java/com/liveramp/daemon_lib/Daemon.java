@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.utils.ResumableDaemonException;
+import com.liveramp.daemon_lib.utils.UnresumableDaemonException;
 import com.liveramp.java_support.alerts_handler.AlertsHandler;
 import com.liveramp.java_support.alerts_handler.recipients.AlertRecipients;
 import com.liveramp.java_support.alerts_handler.recipients.AlertSeverity;
@@ -35,15 +36,20 @@ public class Daemon<T extends JobletConfig> {
     LOG.info("Starting daemon ({})", identifier);
     running = true;
 
-    while (running) {
-      processNext();
-      doSleep();
+    try {
+      while (running) {
+        processNext();
+        doSleep();
+      }
+    } catch (Exception e) {
+      alertsHandler.sendAlert("Fatal error occurred in daemon (" + identifier + "). Shutting down.", e, AlertRecipients.engineering(AlertSeverity.ERROR));
+      LOG.error("Fatal error", e);
     }
 
     LOG.info("Exiting daemon ({})", identifier);
   }
 
-  protected boolean processNext() {
+  protected boolean processNext() throws UnresumableDaemonException {
     if (executor.canExecuteAnother()) {
       T jobletConfig;
       try {
@@ -57,7 +63,7 @@ public class Daemon<T extends JobletConfig> {
         LOG.info("Found joblet config: " + jobletConfig);
         try {
           executor.execute(jobletConfig);
-        } catch (Exception e) {
+        } catch (ResumableDaemonException e) {
           alertsHandler.sendAlert("Error executing joblet config for daemon (" + identifier + ")", jobletConfig.toString(), e, AlertRecipients.engineering(AlertSeverity.ERROR));
         }
         return true;
