@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 import com.liveramp.java_support.alerts_handler.AlertsHandler;
 
 import static org.mockito.Matchers.any;
@@ -29,7 +29,7 @@ public class TestDaemon extends DaemonLibTestCase {
   }
 
   @Test
-  public void executeConfig() throws DaemonException {
+  public void executeConfig() throws ResumableDaemonException {
     Mockito.when(executor.canExecuteAnother()).thenReturn(true);
     Mockito.when(configProducer.getNextConfig()).thenReturn(config);
 
@@ -39,7 +39,7 @@ public class TestDaemon extends DaemonLibTestCase {
   }
 
   @Test
-  public void executionUnavailable() throws DaemonException {
+  public void executionUnavailable() throws ResumableDaemonException {
     Mockito.when(executor.canExecuteAnother()).thenReturn(false);
     Mockito.when(configProducer.getNextConfig()).thenReturn(config);
 
@@ -49,7 +49,7 @@ public class TestDaemon extends DaemonLibTestCase {
   }
 
   @Test
-  public void noNextConfig() throws DaemonException {
+  public void noNextConfig() throws ResumableDaemonException {
     Mockito.when(executor.canExecuteAnother()).thenReturn(false);
     Mockito.when(configProducer.getNextConfig()).thenReturn(null);
 

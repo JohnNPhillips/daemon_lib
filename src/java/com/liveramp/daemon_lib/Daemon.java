@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 import com.liveramp.java_support.alerts_handler.AlertsHandler;
 import com.liveramp.java_support.alerts_handler.recipients.AlertRecipients;
 import com.liveramp.java_support.alerts_handler.recipients.AlertSeverity;
@@ -48,7 +48,7 @@ public class Daemon<T extends JobletConfig> {
       T jobletConfig;
       try {
         jobletConfig = configProducer.getNextConfig();
-      } catch (DaemonException e) {
+      } catch (ResumableDaemonException e) {
         alertsHandler.sendAlert("Error getting next config for daemon (" + identifier + ")", e, AlertRecipients.engineering(AlertSeverity.ERROR));
         return false;
       }

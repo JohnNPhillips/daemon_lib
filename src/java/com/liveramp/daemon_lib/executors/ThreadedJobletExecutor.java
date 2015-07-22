@@ -9,7 +9,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallbacks;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 
 public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private static final Logger LOG = LoggerFactory.getLogger(ThreadedJobletExecutor.class);
@@ -27,7 +27,7 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
   }
 
   @Override
-  public void execute(final T config) throws DaemonException {
+  public void execute(final T config) throws ResumableDaemonException {
     jobletCallbacks.before(config);
     threadPool.submit(new Runnable() {
       @Override
@@ -35,12 +35,12 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
         try {
           Joblet joblet = jobletFactory.create(config);
           joblet.run();
-        } catch (DaemonException e) {
+        } catch (ResumableDaemonException e) {
           LOG.error("Failed to run joblet for config {}", config, e);
         } finally {
           try {
             jobletCallbacks.after(config);
-          } catch (DaemonException e) {
+          } catch (ResumableDaemonException e) {
             LOG.error("Failed to call after for config {}", config, e);
           }
         }

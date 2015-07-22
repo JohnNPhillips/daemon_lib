@@ -15,7 +15,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallbacks;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -63,8 +63,8 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
 
     when(factory.create(config)).thenReturn(new Joblet() {
       @Override
-      public void run() throws DaemonException {
-        throw new DaemonException();
+      public void run() throws ResumableDaemonException {
+        throw new ResumableDaemonException();
       }
     });
 
@@ -84,7 +84,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     final AtomicBoolean stop = new AtomicBoolean(false);
     when(factory.create(config)).thenReturn(new Joblet() {
       @Override
-      public void run() throws DaemonException {
+      public void run() throws ResumableDaemonException {
         while (!stop.get()) {
         }
       }

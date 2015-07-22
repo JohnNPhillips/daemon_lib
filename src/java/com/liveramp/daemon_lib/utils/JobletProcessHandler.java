@@ -15,13 +15,13 @@ public class JobletProcessHandler<T extends JobletConfig> implements ProcessHand
   }
 
   @Override
-  public void onRemove(ProcessDefinition<JobletConfigMetadata> watchedProcess) throws DaemonException {
+  public void onRemove(ProcessDefinition<JobletConfigMetadata> watchedProcess) throws ResumableDaemonException {
     try {
       JobletConfigMetadata metadata = watchedProcess.getMetadata();
       T jobletConfig = configStorage.loadConfig(metadata.getIdentifier());
       callbacks.after(jobletConfig);
     } catch (Exception e) {
-      throw new DaemonException(e);
+      throw new ResumableDaemonException(e);
     }
   }
 }

@@ -4,7 +4,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallbacks;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 
 public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private final JobletFactory<T> jobletFactory;
@@ -20,7 +20,7 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
   }
 
   @Override
-  public void execute(T jobletConfig) throws DaemonException {
+  public void execute(T jobletConfig) throws ResumableDaemonException {
     jobletCallbacks.before(jobletConfig);
     Joblet joblet = jobletFactory.create(jobletConfig);
     try {

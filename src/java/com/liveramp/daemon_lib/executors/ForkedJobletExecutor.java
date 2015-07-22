@@ -6,7 +6,7 @@ import com.liveramp.daemon_lib.JobletCallbacks;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ResumableDaemonException;
 import com.liveramp.daemon_lib.utils.ForkedJobletRunner;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
@@ -31,14 +31,14 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
   }
 
   @Override
-  public void execute(T config) throws DaemonException {
+  public void execute(T config) throws ResumableDaemonException {
     try {
       String identifier = configStorage.storeConfig(config);
       jobletCallbacks.before(config);
       int pid = jobletRunner.run(jobletFactoryClass, configStorage, identifier, envVariables);
       processController.registerProcess(pid, new JobletConfigMetadata(identifier));
     } catch (Exception e) {
-      throw new DaemonException(e);
+      throw new ResumableDaemonException(e);
     }
   }
 
