@@ -28,7 +28,7 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
 
   private volatile List<ProcessDefinition<T>> currentProcesses;
 
-  public LocalProcessController(FsHelper fsHelper, ProcessHandler<T> processHandler, PidGetter pidGetter, int pollDelay, ProcessMetadata.Serializer<T> metadataSerializer) {
+  public LocalProcessController(FsHelper fsHelper, ProcessHandler<T> processHandler, PidGetter pidGetter, int pollDelay, ProcessMetadata.Serializer<T> metadataSerializer) throws IOException {
     super(LocalProcessController.class.getSimpleName());
     this.fsHelper = fsHelper;
     this.processHandler = processHandler;
@@ -36,7 +36,7 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
     this.pollDelay = pollDelay;
     this.metadataSerializer = metadataSerializer;
     this.stop = false;
-    this.currentProcesses = Lists.newLinkedList();
+    this.currentProcesses = getWatchedProcesses(fsHelper);
 
     setDaemon(true);
   }
