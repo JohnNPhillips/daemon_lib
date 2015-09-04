@@ -44,6 +44,6 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
 
   @Override
   public boolean canExecuteAnother() {
-    return processController.getProcesses().size() < maxProcesses;
+    return processController.isInitialized() && processController.getProcesses().size() < maxProcesses;
   }
 }

@@ -25,10 +25,11 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
   private final int pollDelay;
   private final ProcessMetadata.Serializer<T> metadataSerializer;
   private boolean stop;
+  private boolean initialized = false;
 
   private volatile List<ProcessDefinition<T>> currentProcesses;
 
-  public LocalProcessController(FsHelper fsHelper, ProcessHandler<T> processHandler, PidGetter pidGetter, int pollDelay, ProcessMetadata.Serializer<T> metadataSerializer) throws IOException {
+  public LocalProcessController(FsHelper fsHelper, ProcessHandler<T> processHandler, PidGetter pidGetter, int pollDelay, ProcessMetadata.Serializer<T> metadataSerializer) {
     super(LocalProcessController.class.getSimpleName());
     this.fsHelper = fsHelper;
     this.processHandler = processHandler;
@@ -36,7 +37,7 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
     this.pollDelay = pollDelay;
     this.metadataSerializer = metadataSerializer;
     this.stop = false;
-    this.currentProcesses = getWatchedProcesses(fsHelper);
+    this.currentProcesses = Lists.newLinkedList();
 
     setDaemon(true);
   }
@@ -58,6 +59,11 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
     if (!tmpFile.renameTo(pidFile)) {
       throw new ProcessControllerException(String.format("Unable to commit control file '%s' for %d pid.", pidFile.toString(), process.getPid()));
     }
+  }
+
+  @Override
+  public boolean isInitialized() {
+    return initialized;
   }
 
   @Override
@@ -86,6 +92,7 @@ public class LocalProcessController<T extends ProcessMetadata> extends Thread im
       } catch (Exception e) {
         LOG.warn("Exception while watching processes.", e);
       }
+      initialized = true;
       doSleep(pollDelay);
     }
   }
