@@ -50,8 +50,6 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
         } finally {
           try {
             jobletCallbacks.after(config);
-          } catch (DaemonException e) {
-            LOG.error("Failed to call after for config {}", config, e);
           } catch (Exception e) {
             LOG.error("Fatal error in call after config {}", config, e);
             uncheckedExceptionsFromTasks.add(e);
