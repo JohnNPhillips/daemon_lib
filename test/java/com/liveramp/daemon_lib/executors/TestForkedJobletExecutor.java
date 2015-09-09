@@ -64,6 +64,10 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
   @Test
   public void canExecuteAnother() throws ProcessControllerException {
     Mockito.when(processController.getProcesses()).thenReturn(Lists.<ProcessDefinition<JobletConfigMetadata>>newArrayList());
+    Assert.assertEquals(false, executor.canExecuteAnother());
+
+    Mockito.when(processController.getProcesses()).thenReturn(Lists.<ProcessDefinition<JobletConfigMetadata>>newArrayList());
+    Mockito.when(processController.isInitialized()).thenReturn(true);
     Assert.assertEquals(true, executor.canExecuteAnother());
 
     Mockito.when(processController.getProcesses()).thenReturn(Lists.newArrayList(DUMMY_PROCESS));
