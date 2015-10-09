@@ -30,8 +30,8 @@ public class JobletExecutors {
 
   public static class Blocking {
 
-    public static <T extends JobletConfig> BlockingJobletExecutor<T> get(JobletFactory<T> jobletFactory, JobletCallbacks<T> jobletCallbacks) throws IllegalAccessException, InstantiationException {
-      return new BlockingJobletExecutor<>(jobletFactory, AfterJobletCallback.wrap(jobletCallbacks));
+    public static <T extends JobletConfig> BlockingJobletExecutor<T> get(JobletFactory<T> jobletFactory, JobletCallbacks<T> jobletCallbacks, JobletCallback<T> successCallback, JobletCallback<T> failureCallback) throws IllegalAccessException, InstantiationException {
+      return new BlockingJobletExecutor<>(jobletFactory, AfterJobletCallback.wrap(jobletCallbacks), successCallback, failureCallback);
     }
   }
 
