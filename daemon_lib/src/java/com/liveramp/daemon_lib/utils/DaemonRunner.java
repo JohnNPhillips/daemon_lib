@@ -1,7 +1,6 @@
 package com.liveramp.daemon_lib.utils;
 
 import com.liveramp.daemon_lib.Daemon;
-import com.liveramp.liveramp_hlib.util.SocketEnsureOneProcessInstance;
 
 public class DaemonRunner {
   public static void run(Daemon daemon) throws Exception {
