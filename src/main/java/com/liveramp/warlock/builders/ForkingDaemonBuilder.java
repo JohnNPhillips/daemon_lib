@@ -14,7 +14,6 @@ import com.liveramp.warlock.JobletFactory;
 import com.liveramp.warlock.executors.JobletExecutor;
 import com.liveramp.warlock.executors.JobletExecutors;
 import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
-import com.liveramp.warlock.executors.forking.ProcessJobletRunners;
 
 public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ForkingDaemonBuilder<T>> {
 
@@ -64,10 +63,6 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
-    if (jobletRunner == null) {
-      jobletRunner = ProcessJobletRunners.production();
-    }
-
     final String tmpPath = new File(workingDir, identifier).getPath();
     return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner);
   }

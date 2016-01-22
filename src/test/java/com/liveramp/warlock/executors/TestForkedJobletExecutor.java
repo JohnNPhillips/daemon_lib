@@ -12,13 +12,11 @@ import org.mockito.Mockito;
 import com.liveramp.warlock.DaemonLibTestCase;
 import com.liveramp.warlock.JobletConfig;
 import com.liveramp.warlock.JobletFactory;
-import com.liveramp.warlock.executors.ForkedJobletExecutor;
 import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
 import com.liveramp.warlock.executors.processes.ProcessController;
 import com.liveramp.warlock.executors.processes.ProcessControllerException;
 import com.liveramp.warlock.executors.processes.ProcessDefinition;
 import com.liveramp.warlock.utils.DaemonException;
-import com.liveramp.warlock.executors.forking.ForkedJobletRunner;
 import com.liveramp.warlock.utils.JobletConfigMetadata;
 import com.liveramp.warlock.utils.JobletConfigStorage;
 
@@ -45,7 +43,7 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
   public void setup() {
     this.configStorage = Mockito.mock(JobletConfigStorage.class);
     this.processController = Mockito.mock(ProcessController.class);
-    this.jobletRunner = Mockito.mock(ForkedJobletRunner.class);
+    this.jobletRunner = Mockito.mock(ProcessJobletRunner.class);
     this.executor = new ForkedJobletExecutor<>(MAX_PROCESSES, MockJobletFactory.class, configStorage, processController, jobletRunner, Maps.<String, String>newHashMap(), TEST_ROOT);
 
     this.config = Mockito.mock(JobletConfig.class);

@@ -54,13 +54,11 @@ public class DemoDaemon {
   }
 
   public static void main(String[] args) throws Exception {
-    Daemon daemon = DaemonBuilders.forked(
-        "/tmp/daemons",
+    Daemon daemon = DaemonBuilders.blocking(
         "demo",
-        Factory.class,
+        new Factory(),
         new Producer()
     )
-        .setMaxProcesses(4)
         .setConfigWaitSeconds(1)
         .setNextConfigWaitSeconds(1)
         .build();

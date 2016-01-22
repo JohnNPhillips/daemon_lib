@@ -9,16 +9,6 @@ import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
 
 public class DaemonBuilders {
 
-  public static <T extends JobletConfig> ForkingDaemonBuilder<T> forked(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> jobletConfigProducer) throws IllegalAccessException, IOException, InstantiationException {
-    return new ForkingDaemonBuilder<>(
-        workingDir,
-        identifier,
-        jobletFactoryClass,
-        jobletConfigProducer,
-        null
-    );
-  }
-
   public static <T extends JobletConfig> ForkingDaemonBuilder<T> forked(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> jobletConfigProducer, ProcessJobletRunner jobletRunner) throws IllegalAccessException, IOException, InstantiationException {
     return new ForkingDaemonBuilder<>(
         workingDir,
