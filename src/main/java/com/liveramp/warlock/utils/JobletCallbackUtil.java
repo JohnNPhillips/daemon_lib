@@ -1,7 +1,7 @@
-package com.liveramp.daemon_lib.utils;
+package com.liveramp.warlock.utils;
 
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
 
 public class JobletCallbackUtil {
 

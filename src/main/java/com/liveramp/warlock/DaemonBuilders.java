@@ -1,11 +1,11 @@
-package com.liveramp.daemon_lib;
+package com.liveramp.warlock;
 
 import java.io.IOException;
 
-import com.liveramp.daemon_lib.builders.BlockingDaemonBuilder;
-import com.liveramp.daemon_lib.builders.ForkingDaemonBuilder;
-import com.liveramp.daemon_lib.builders.ThreadingDaemonBuilder;
-import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
+import com.liveramp.warlock.builders.BlockingDaemonBuilder;
+import com.liveramp.warlock.builders.ForkingDaemonBuilder;
+import com.liveramp.warlock.builders.ThreadingDaemonBuilder;
+import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
 
 public class DaemonBuilders {
 

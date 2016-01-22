@@ -1,8 +1,8 @@
-package com.liveramp.daemon_lib.executors.processes.local;
+package com.liveramp.warlock.executors.processes.local;
 
-import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
-import com.liveramp.daemon_lib.executors.processes.ProcessMetadata;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.executors.processes.ProcessDefinition;
+import com.liveramp.warlock.executors.processes.ProcessMetadata;
+import com.liveramp.warlock.utils.DaemonException;
 
 public interface ProcessHandler<T extends ProcessMetadata> {
   void onRemove(ProcessDefinition<T> watchedProcess) throws DaemonException;

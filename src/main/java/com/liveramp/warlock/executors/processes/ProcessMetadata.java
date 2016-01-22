@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.executors.processes;
+package com.liveramp.warlock.executors.processes;
 
 public interface ProcessMetadata {
   interface Serializer<T extends ProcessMetadata> {

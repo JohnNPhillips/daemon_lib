@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.utils;
+package com.liveramp.warlock.utils;
 
 public class DaemonException extends Exception {
   public DaemonException() {

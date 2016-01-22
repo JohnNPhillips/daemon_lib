@@ -1,6 +1,6 @@
-package com.liveramp.daemon_lib;
+package com.liveramp.warlock;
 
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.utils.DaemonException;
 
 public interface DaemonLock {
 

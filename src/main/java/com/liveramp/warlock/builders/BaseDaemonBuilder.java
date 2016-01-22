@@ -1,18 +1,18 @@
-package com.liveramp.daemon_lib.builders;
+package com.liveramp.warlock.builders;
 
 import java.io.IOException;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.liveramp.daemon_lib.DaemonNotifier;
-import com.liveramp.daemon_lib.Daemon;
-import com.liveramp.daemon_lib.DaemonLock;
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletConfigProducer;
-import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
-import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
-import com.liveramp.daemon_lib.executors.JobletExecutor;
+import com.liveramp.warlock.DaemonNotifier;
+import com.liveramp.warlock.Daemon;
+import com.liveramp.warlock.DaemonLock;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletConfigProducer;
+import com.liveramp.warlock.utils.NoOpDaemonNotifier;
+import com.liveramp.warlock.built_in.NoOpDaemonLock;
+import com.liveramp.warlock.executors.JobletExecutor;
 
 public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> {
   protected final String identifier;
@@ -38,7 +38,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   }
 
   /**
-   * See {@link com.liveramp.daemon_lib.Daemon.Options#setConfigWaitSeconds(int)}
+   * See {@link com.liveramp.warlock.Daemon.Options#setConfigWaitSeconds(int)}
    */
   public K setConfigWaitSeconds(int sleepingSeconds) {
     options.setConfigWaitSeconds(sleepingSeconds);
@@ -46,7 +46,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   }
 
   /**
-   * See {@link com.liveramp.daemon_lib.Daemon.Options#setExecutionSlotWaitSeconds(int)}
+   * See {@link com.liveramp.warlock.Daemon.Options#setExecutionSlotWaitSeconds(int)}
    */
   public K setExecutionSlotWaitSeconds(int sleepingSeconds) {
     options.setExecutionSlotWaitSeconds(sleepingSeconds);
@@ -54,7 +54,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   }
 
   /**
-   * See {@link com.liveramp.daemon_lib.Daemon.Options#setNextConfigWaitSeconds(int)}
+   * See {@link com.liveramp.warlock.Daemon.Options#setNextConfigWaitSeconds(int)}
    */
   public K setNextConfigWaitSeconds(int sleepingSeconds) {
     options.setNextConfigWaitSeconds(sleepingSeconds);
@@ -62,7 +62,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   }
 
   /**
-   * See {@link com.liveramp.daemon_lib.Daemon.Options#setFailureWaitSeconds(int)}
+   * See {@link com.liveramp.warlock.Daemon.Options#setFailureWaitSeconds(int)}
    */
   public K setFailureWaitSeconds(int sleepingSeconds) {
     options.setFailureWaitSeconds(sleepingSeconds);

@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.executors;
+package com.liveramp.warlock.executors;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -10,12 +10,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.liveramp.daemon_lib.DaemonLibTestCase;
-import com.liveramp.daemon_lib.Joblet;
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.built_in.IDConfig;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.DaemonLibTestCase;
+import com.liveramp.warlock.Joblet;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.built_in.IDConfig;
+import com.liveramp.warlock.executors.ThreadedJobletExecutor;
+import com.liveramp.warlock.utils.DaemonException;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;

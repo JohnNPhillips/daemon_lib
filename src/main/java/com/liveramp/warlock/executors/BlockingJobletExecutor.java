@@ -1,10 +1,10 @@
-package com.liveramp.daemon_lib.executors;
+package com.liveramp.warlock.executors;
 
-import com.liveramp.daemon_lib.Joblet;
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.Joblet;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.utils.DaemonException;
 
 public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private final JobletFactory<T> jobletFactory;

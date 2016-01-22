@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib;
+package com.liveramp.warlock;
 
 import java.util.concurrent.TimeUnit;
 
@@ -6,8 +6,8 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.executors.JobletExecutor;
+import com.liveramp.warlock.utils.DaemonException;
 
 public class Daemon<T extends JobletConfig> {
   private static final Logger LOG = LoggerFactory.getLogger(Daemon.class);

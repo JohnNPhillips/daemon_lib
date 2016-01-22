@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.utils;
+package com.liveramp.warlock.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SerializationUtils;
 
-import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.warlock.JobletConfig;
 
 public class JobletConfigStorage<T extends JobletConfig> {
   private final String basePath;

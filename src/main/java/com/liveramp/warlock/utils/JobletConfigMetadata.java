@@ -1,9 +1,9 @@
-package com.liveramp.daemon_lib.utils;
+package com.liveramp.warlock.utils;
 
 import com.google.gson.Gson;
 
 import com.liveramp.commons.util.BytesUtils;
-import com.liveramp.daemon_lib.executors.processes.ProcessMetadata;
+import com.liveramp.warlock.executors.processes.ProcessMetadata;
 
 public class JobletConfigMetadata implements ProcessMetadata {
   private final String identifier;

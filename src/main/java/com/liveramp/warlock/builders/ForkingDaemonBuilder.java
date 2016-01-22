@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.builders;
+package com.liveramp.warlock.builders;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,14 +7,14 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletConfigProducer;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.JobletExecutors;
-import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletConfigProducer;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.executors.JobletExecutor;
+import com.liveramp.warlock.executors.JobletExecutors;
+import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
+import com.liveramp.warlock.executors.forking.ProcessJobletRunners;
 
 public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ForkingDaemonBuilder<T>> {
 

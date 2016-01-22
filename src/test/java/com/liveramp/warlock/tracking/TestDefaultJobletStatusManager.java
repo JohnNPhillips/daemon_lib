@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.tracking;
+package com.liveramp.warlock.tracking;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.liveramp.daemon_lib.DaemonLibTestCase;
+import com.liveramp.warlock.DaemonLibTestCase;
+import com.liveramp.warlock.tracking.DefaultJobletStatusManager;
+import com.liveramp.warlock.tracking.JobletStatus;
 
 public class TestDefaultJobletStatusManager extends DaemonLibTestCase {
   public static String DB_DIR = "/tmp/db";

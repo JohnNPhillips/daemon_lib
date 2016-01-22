@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.executors.processes.local;
+package com.liveramp.warlock.executors.processes.local;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +15,12 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.liveramp.daemon_lib.DaemonNotifier;
-import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
-import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
-import com.liveramp.daemon_lib.executors.processes.ProcessMetadata;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.DaemonNotifier;
+import com.liveramp.warlock.executors.processes.ProcessController;
+import com.liveramp.warlock.executors.processes.ProcessControllerException;
+import com.liveramp.warlock.executors.processes.ProcessDefinition;
+import com.liveramp.warlock.executors.processes.ProcessMetadata;
+import com.liveramp.warlock.utils.DaemonException;
 
 
 public class LocalProcessController<T extends ProcessMetadata> implements ProcessController<T> {

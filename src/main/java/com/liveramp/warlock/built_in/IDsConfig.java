@@ -1,10 +1,10 @@
-package com.liveramp.daemon_lib.built_in;
+package com.liveramp.warlock.built_in;
 
 import java.util.List;
 
 import com.google.common.base.Joiner;
 
-import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.warlock.JobletConfig;
 
 public class IDsConfig implements JobletConfig {
   private final List<Long> ids;

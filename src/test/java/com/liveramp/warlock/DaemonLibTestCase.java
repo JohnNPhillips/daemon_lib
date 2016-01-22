@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib;
+package com.liveramp.warlock;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;

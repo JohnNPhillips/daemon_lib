@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.executors.forking;
+package com.liveramp.warlock.executors.forking;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,13 +9,13 @@ import java.util.Map;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.io.FileUtils;
 
-import com.liveramp.daemon_lib.Joblet;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.executors.processes.ProcessUtil;
-import com.liveramp.daemon_lib.tracking.DefaultJobletStatusManager;
-import com.liveramp.daemon_lib.utils.DaemonException;
-import com.liveramp.daemon_lib.utils.JobletConfigStorage;
+import com.liveramp.warlock.Joblet;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.executors.processes.ProcessUtil;
+import com.liveramp.warlock.tracking.DefaultJobletStatusManager;
+import com.liveramp.warlock.utils.DaemonException;
+import com.liveramp.warlock.utils.JobletConfigStorage;
 
 public class ForkedJobletRunner implements ProcessJobletRunner {
   private static final String JOBLET_RUNNER_SCRIPT = "bin/joblet_runner.sh";

@@ -1,13 +1,13 @@
-package com.liveramp.daemon_lib.utils;
+package com.liveramp.warlock.utils;
 
 import java.io.IOException;
 
-import com.liveramp.daemon_lib.JobletCallback;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
-import com.liveramp.daemon_lib.executors.processes.local.ProcessHandler;
-import com.liveramp.daemon_lib.tracking.JobletStatus;
-import com.liveramp.daemon_lib.tracking.JobletStatusManager;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.executors.processes.ProcessDefinition;
+import com.liveramp.warlock.executors.processes.local.ProcessHandler;
+import com.liveramp.warlock.tracking.JobletStatus;
+import com.liveramp.warlock.tracking.JobletStatusManager;
 
 public class JobletProcessHandler<T extends JobletConfig> implements ProcessHandler<JobletConfigMetadata> {
   private final JobletCallback<T> successCallback;

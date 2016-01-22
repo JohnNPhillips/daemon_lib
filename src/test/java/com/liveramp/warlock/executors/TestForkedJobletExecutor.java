@@ -1,4 +1,4 @@
-package com.liveramp.daemon_lib.executors;
+package com.liveramp.warlock.executors;
 
 import java.io.IOException;
 
@@ -9,17 +9,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.liveramp.daemon_lib.DaemonLibTestCase;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
-import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
-import com.liveramp.daemon_lib.utils.DaemonException;
-import com.liveramp.daemon_lib.executors.forking.ForkedJobletRunner;
-import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
-import com.liveramp.daemon_lib.utils.JobletConfigStorage;
+import com.liveramp.warlock.DaemonLibTestCase;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.executors.ForkedJobletExecutor;
+import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
+import com.liveramp.warlock.executors.processes.ProcessController;
+import com.liveramp.warlock.executors.processes.ProcessControllerException;
+import com.liveramp.warlock.executors.processes.ProcessDefinition;
+import com.liveramp.warlock.utils.DaemonException;
+import com.liveramp.warlock.executors.forking.ForkedJobletRunner;
+import com.liveramp.warlock.utils.JobletConfigMetadata;
+import com.liveramp.warlock.utils.JobletConfigStorage;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;

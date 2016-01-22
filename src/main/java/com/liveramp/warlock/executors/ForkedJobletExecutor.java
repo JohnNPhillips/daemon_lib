@@ -1,17 +1,17 @@
-package com.liveramp.daemon_lib.executors;
+package com.liveramp.warlock.executors;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
-import com.liveramp.daemon_lib.utils.DaemonException;
-import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
-import com.liveramp.daemon_lib.utils.JobletConfigStorage;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.executors.forking.ProcessJobletRunner;
+import com.liveramp.warlock.executors.processes.ProcessController;
+import com.liveramp.warlock.executors.processes.ProcessControllerException;
+import com.liveramp.warlock.utils.DaemonException;
+import com.liveramp.warlock.utils.JobletConfigMetadata;
+import com.liveramp.warlock.utils.JobletConfigStorage;
 
 public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private final JobletConfigStorage<T> configStorage;

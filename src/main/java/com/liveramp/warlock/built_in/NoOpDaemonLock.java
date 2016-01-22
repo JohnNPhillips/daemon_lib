@@ -1,7 +1,7 @@
-package com.liveramp.daemon_lib.built_in;
+package com.liveramp.warlock.built_in;
 
-import com.liveramp.daemon_lib.DaemonLock;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.DaemonLock;
+import com.liveramp.warlock.utils.DaemonException;
 
 public class NoOpDaemonLock implements DaemonLock {
   @Override

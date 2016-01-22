@@ -1,12 +1,12 @@
-package com.liveramp.daemon_lib.demo_daemon;
+package com.liveramp.warlock.demo_daemon;
 
-import com.liveramp.daemon_lib.Daemon;
-import com.liveramp.daemon_lib.DaemonBuilders;
-import com.liveramp.daemon_lib.Joblet;
-import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.JobletConfigProducer;
-import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.Daemon;
+import com.liveramp.warlock.DaemonBuilders;
+import com.liveramp.warlock.Joblet;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletConfigProducer;
+import com.liveramp.warlock.JobletFactory;
+import com.liveramp.warlock.utils.DaemonException;
 
 public class DemoDaemon {
 

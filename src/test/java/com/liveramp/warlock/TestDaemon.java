@@ -1,12 +1,17 @@
-package com.liveramp.daemon_lib;
+package com.liveramp.warlock;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
-import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.warlock.Daemon;
+import com.liveramp.warlock.DaemonNotifier;
+import com.liveramp.warlock.JobletCallback;
+import com.liveramp.warlock.JobletConfig;
+import com.liveramp.warlock.JobletConfigProducer;
+import com.liveramp.warlock.built_in.NoOpDaemonLock;
+import com.liveramp.warlock.executors.JobletExecutor;
+import com.liveramp.warlock.utils.DaemonException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;

@@ -1,6 +1,6 @@
-package com.liveramp.daemon_lib.built_in;
+package com.liveramp.warlock.built_in;
 
-import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.warlock.JobletConfig;
 
 public class EmptyConfig implements JobletConfig {
   @Override
