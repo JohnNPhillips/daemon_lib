@@ -17,7 +17,6 @@ import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
 import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
 import com.liveramp.daemon_lib.utils.DaemonException;
-import com.liveramp.daemon_lib.executors.forking.ForkedJobletRunner;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
@@ -44,7 +43,7 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
   public void setup() {
     this.configStorage = Mockito.mock(JobletConfigStorage.class);
     this.processController = Mockito.mock(ProcessController.class);
-    this.jobletRunner = Mockito.mock(ForkedJobletRunner.class);
+    this.jobletRunner = Mockito.mock(ProcessJobletRunner.class);
     this.executor = new ForkedJobletExecutor<>(MAX_PROCESSES, MockJobletFactory.class, configStorage, processController, jobletRunner, Maps.<String, String>newHashMap(), TEST_ROOT);
 
     this.config = Mockito.mock(JobletConfig.class);
