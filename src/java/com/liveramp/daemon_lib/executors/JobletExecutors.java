@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.UncaughtExceptionHandlers;
 import org.apache.commons.io.FileUtils;
 
 import com.liveramp.daemon_lib.DaemonNotifier;
@@ -74,7 +75,7 @@ public class JobletExecutors {
 
       ThreadPoolExecutor threadPool = (ThreadPoolExecutor)Executors.newFixedThreadPool(
           maxActiveJoblets,
-          new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
+          new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").setUncaughtExceptionHandler(UncaughtExceptionHandlers.systemExit()).build()
       );
 
       return new ThreadedJobletExecutor<>(threadPool, jobletFactory, successCallbacks, failureCallbacks);
