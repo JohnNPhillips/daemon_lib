@@ -9,8 +9,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.UncaughtExceptionHandlers;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.JobletCallback;
@@ -27,6 +28,8 @@ import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 import com.liveramp.daemon_lib.utils.JobletProcessHandler;
 
 public class JobletExecutors {
+  private static final Logger LOG = LoggerFactory.getLogger(JobletExecutors.class);
+
 
   public static class Blocking {
 
@@ -75,7 +78,20 @@ public class JobletExecutors {
 
       ThreadPoolExecutor threadPool = (ThreadPoolExecutor)Executors.newFixedThreadPool(
           maxActiveJoblets,
-          new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").setUncaughtExceptionHandler(UncaughtExceptionHandlers.systemExit()).build()
+          new ThreadFactoryBuilder()
+              .setNameFormat("joblet-executor-%d")
+              .setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+                  if (e instanceof Error) {
+                    LOG.error("Uncaught error thrown by joblet, exiting", e);
+                    System.exit(1);
+                  } else {
+                    LOG.error("Uncaught exception thrown by joblet", e);
+                  }
+                }
+              })
+              .build()
       );
 
       return new ThreadedJobletExecutor<>(threadPool, jobletFactory, successCallbacks, failureCallbacks);
