@@ -12,12 +12,13 @@ import org.mockito.Mockito;
 import com.liveramp.daemon_lib.DaemonLibTestCase;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
+import com.liveramp.daemon_lib.executors.forking.ForkedJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
 import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
+import com.liveramp.daemon_lib.serialization.JavaSerializationHelperFactory;
 import com.liveramp.daemon_lib.utils.DaemonException;
-import com.liveramp.daemon_lib.executors.forking.ForkedJobletRunner;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
@@ -45,7 +46,7 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
     this.configStorage = Mockito.mock(JobletConfigStorage.class);
     this.processController = Mockito.mock(ProcessController.class);
     this.jobletRunner = Mockito.mock(ForkedJobletRunner.class);
-    this.executor = new ForkedJobletExecutor<>(MAX_PROCESSES, MockJobletFactory.class, configStorage, processController, jobletRunner, Maps.<String, String>newHashMap(), TEST_ROOT);
+    this.executor = new ForkedJobletExecutor<>(MAX_PROCESSES, MockJobletFactory.class, configStorage, processController, jobletRunner, Maps.<String, String>newHashMap(), TEST_ROOT, JavaSerializationHelperFactory.class);
 
     this.config = Mockito.mock(JobletConfig.class);
   }
@@ -53,7 +54,7 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
   @Test
   public void execute() throws IOException, ProcessControllerException, DaemonException, ClassNotFoundException {
     Mockito.when(configStorage.storeConfig(config)).thenReturn(MOCK_IDENTIFIER);
-    Mockito.when(jobletRunner.run(MockJobletFactory.class, configStorage, MOCK_IDENTIFIER, Maps.<String, String>newHashMap(), TEST_ROOT)).thenReturn(PID);
+    Mockito.when(jobletRunner.run(MockJobletFactory.class, configStorage, MOCK_IDENTIFIER, Maps.<String, String>newHashMap(), TEST_ROOT, JavaSerializationHelperFactory.class)).thenReturn(PID);
 
     executor.execute(config);
 

@@ -11,16 +11,19 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.daemon_lib.serialization.JobletConfigDeserializer;
+import com.liveramp.daemon_lib.serialization.JobletConfigSerializer;
+import com.liveramp.daemon_lib.serialization.SerializationHelper;
 
 public class JobletConfigStorage<T extends JobletConfig> {
   private final String basePath;
-  private final JobletConfigSerializer<T> serializer;
-  private final JobletConfigDeserializer<T> deserializer;
+  private final JobletConfigSerializer serializer;
+  private final JobletConfigDeserializer deserializer;
 
-  public JobletConfigStorage(String basePath, JobletConfigSerializer<T> serializer, JobletConfigDeserializer<T> deserializer) {
+  public JobletConfigStorage(String basePath, SerializationHelper serializerHelper) {
     this.basePath = basePath;
-    this.serializer = serializer;
-    this.deserializer = deserializer;
+    this.serializer = serializerHelper.getSerializer();
+    this.deserializer = serializerHelper.getDeserializer();
   }
 
   // Stores config and returns an identifier that can be used to retrieve it
@@ -42,7 +45,7 @@ public class JobletConfigStorage<T extends JobletConfig> {
   public T loadConfig(String identifier) throws IOException, ClassNotFoundException {
     try {
       ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getPath(identifier)));
-      T config = deserializer.apply(IOUtils.toByteArray(ois));
+      T config = (T)deserializer.apply(IOUtils.toByteArray(ois));
       ois.close();
 
       return config;
@@ -62,8 +65,8 @@ public class JobletConfigStorage<T extends JobletConfig> {
     return basePath;
   }
 
-  public static <T extends JobletConfig> JobletConfigStorage<T> production(String path, JobletConfigSerializer<T> serializer, JobletConfigDeserializer<T> deserializer) {
-    return new JobletConfigStorage<>(path, serializer, deserializer);
+  public static <T extends JobletConfig> JobletConfigStorage<T> production(String path, SerializationHelper serializationHelper) {
+    return new JobletConfigStorage<>(path, serializationHelper);
   }
 
   private String createIdentifier(JobletConfig config) {

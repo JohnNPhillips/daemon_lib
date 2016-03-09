@@ -6,8 +6,7 @@ import com.liveramp.daemon_lib.builders.BlockingDaemonBuilder;
 import com.liveramp.daemon_lib.builders.ForkingDaemonBuilder;
 import com.liveramp.daemon_lib.builders.ThreadingDaemonBuilder;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.utils.JobletConfigJavaDeserializer;
-import com.liveramp.daemon_lib.utils.JobletConfigJavaSerializer;
+import com.liveramp.daemon_lib.serialization.JavaSerializationHelperFactory;
 
 public class DaemonBuilders {
 
@@ -18,8 +17,8 @@ public class DaemonBuilders {
         jobletFactoryClass,
         jobletConfigProducer,
         null,
-        new JobletConfigJavaSerializer<T>(),
-        new JobletConfigJavaDeserializer<T>()
+        new JavaSerializationHelperFactory().create(),
+        JavaSerializationHelperFactory.class
     );
   }
 
@@ -30,8 +29,8 @@ public class DaemonBuilders {
         jobletFactoryClass,
         jobletConfigProducer,
         jobletRunner,
-        new JobletConfigJavaSerializer<T>(),
-        new JobletConfigJavaDeserializer<T>()
+        new JavaSerializationHelperFactory().create(),
+        JavaSerializationHelperFactory.class
     );
   }
 

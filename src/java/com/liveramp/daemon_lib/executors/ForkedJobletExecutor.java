@@ -9,6 +9,7 @@ import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
+import com.liveramp.daemon_lib.serialization.SerializationHelperFactory;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
@@ -21,8 +22,9 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
   private final Class<? extends JobletFactory<? extends T>> jobletFactoryClass;
   private final Map<String, String> envVariables;
   private final String workingDir;
+  private Class<? extends SerializationHelperFactory> serializationHelperFactoryClass;
 
-  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir) {
+  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, Class<? extends SerializationHelperFactory> serializationHelperFactoryClass) {
     this.maxProcesses = maxProcesses;
     this.jobletFactoryClass = jobletFactoryClass;
     this.configStorage = configStorage;
@@ -30,13 +32,14 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     this.jobletRunner = jobletRunner;
     this.envVariables = envVariables;
     this.workingDir = workingDir;
+    this.serializationHelperFactoryClass = serializationHelperFactoryClass;
   }
 
   @Override
   public void execute(T config) throws DaemonException {
     try {
       String identifier = configStorage.storeConfig(config);
-      int pid = jobletRunner.run(jobletFactoryClass, configStorage, identifier, envVariables, workingDir);
+      int pid = jobletRunner.run(jobletFactoryClass, configStorage, identifier, envVariables, workingDir, serializationHelperFactoryClass);
       processController.registerProcess(pid, new JobletConfigMetadata(identifier));
     } catch (Exception e) {
       throw new DaemonException(e);
@@ -67,12 +70,14 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     private ProcessJobletRunner jobletRunner;
     private Map<String, String> envVariables;
     private String workingDir;
+    private Class<? extends SerializationHelperFactory> serializationHelperFactoryClass;
 
-    public Builder(String workingDir, Class<? extends JobletFactory<? extends S>> jobletFactoryClass, JobletConfigStorage<S> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner) {
+    public Builder(String workingDir, Class<? extends JobletFactory<? extends S>> jobletFactoryClass, JobletConfigStorage<S> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Class<? extends SerializationHelperFactory> serializationHelperFactoryClass) {
       this.workingDir = workingDir;
       this.jobletFactoryClass = jobletFactoryClass;
       this.configStorage = configStorage;
       this.processController = processController;
+      this.serializationHelperFactoryClass = serializationHelperFactoryClass;
 
       this.maxProcesses = DEFAULT_MAX_PROCESSES;
       this.envVariables = new HashMap<>();
@@ -120,7 +125,7 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     }
 
     public ForkedJobletExecutor<S> build() throws IOException {
-      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir);
+      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, serializationHelperFactoryClass);
     }
   }
 }

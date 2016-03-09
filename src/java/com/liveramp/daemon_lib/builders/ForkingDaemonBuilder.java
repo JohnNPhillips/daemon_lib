@@ -15,8 +15,8 @@ import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
-import com.liveramp.daemon_lib.utils.JobletConfigDeserializer;
-import com.liveramp.daemon_lib.utils.JobletConfigSerializer;
+import com.liveramp.daemon_lib.serialization.SerializationHelper;
+import com.liveramp.daemon_lib.serialization.SerializationHelperFactory;
 
 public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ForkingDaemonBuilder<T>> {
 
@@ -28,19 +28,19 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
   private JobletCallback<T> failureCallback;
   private ProcessJobletRunner jobletRunner;
 
-  private JobletConfigSerializer<T> serializer;
-  private JobletConfigDeserializer<T> deserializer;
+  private SerializationHelper serializationHelper;
+  private Class<? extends SerializationHelperFactory> serializationHelperFactoryClass;
 
   private static final int DEFAULT_MAX_PROCESSES = 1;
   private static final Map<String, String> DEFAULT_ENV_VARS = Maps.newHashMap();
 
-  public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> configProducer, ProcessJobletRunner jobletRunner, JobletConfigSerializer<T> serializer, JobletConfigDeserializer<T> deserializer) {
+  public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> configProducer, ProcessJobletRunner jobletRunner, SerializationHelper serializationHelper, Class<? extends SerializationHelperFactory> serializationHelperFactoryClass) {
     super(identifier, configProducer);
     this.workingDir = workingDir;
     this.jobletFactoryClass = jobletFactoryClass;
     this.jobletRunner = jobletRunner;
-    this.serializer = serializer;
-    this.deserializer = deserializer;
+    this.serializationHelper = serializationHelper;
+    this.serializationHelperFactoryClass = serializationHelperFactoryClass;
 
     maxProcesses = DEFAULT_MAX_PROCESSES;
     envVariables = DEFAULT_ENV_VARS;
@@ -76,6 +76,6 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
     }
 
     final String tmpPath = new File(workingDir, identifier).getPath();
-    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner, serializer, deserializer);
+    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner, serializationHelper, serializationHelperFactoryClass);
   }
 }

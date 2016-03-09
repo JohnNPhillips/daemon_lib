@@ -13,6 +13,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.processes.ProcessUtil;
+import com.liveramp.daemon_lib.serialization.SerializationHelperFactory;
 import com.liveramp.daemon_lib.tracking.DefaultJobletStatusManager;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
@@ -22,10 +23,10 @@ public class ForkedJobletRunner implements ProcessJobletRunner {
   private static final String JOBLET_RUNNER_SCRIPT_SOURCE = "com/liveramp/daemon_lib/utils/joblet_runner.txt";
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir, Class<? extends SerializationHelperFactory> serializationHelperFactoryClass) throws IOException {
     prepareScript();
 
-    ProcessBuilder processBuilder = new ProcessBuilder(JOBLET_RUNNER_SCRIPT, quote(jobletFactoryClass.getName()), configStore.getPath(), workingDir, configIdentifier);
+    ProcessBuilder processBuilder = new ProcessBuilder(JOBLET_RUNNER_SCRIPT, quote(jobletFactoryClass.getName()), configStore.getPath(), workingDir, configIdentifier, quote(serializationHelperFactoryClass.getName()));
     processBuilder.environment().putAll(envVariables);
     int pid = ProcessUtil.run(processBuilder);
 
@@ -67,15 +68,17 @@ public class ForkedJobletRunner implements ProcessJobletRunner {
     String configStorePath = args[1];
     String daemonWorkingDir = args[2];
     String id = args[3];
+    String serializationHelperFactoryClass = unquote(args[4]);
 
-    // todo get serializer and deserializer
 
-    JobletFactory factory = (JobletFactory)Class.forName(jobletFactoryClassName).newInstance();
-    JobletConfig config = JobletConfigStorage.production(configStorePath, serializer, deserializer).loadConfig(id);
+
+    JobletFactory jobletFactory = (JobletFactory)Class.forName(jobletFactoryClassName).newInstance();
+    SerializationHelperFactory serializationHelperFactory = (SerializationHelperFactory)Class.forName(serializationHelperFactoryClass).newInstance();
+    JobletConfig config = JobletConfigStorage.production(configStorePath, serializationHelperFactory.create()).loadConfig(id);
     DefaultJobletStatusManager jobletStatusManager = new DefaultJobletStatusManager(daemonWorkingDir);
 
     try {
-      Joblet joblet = factory.create(config);
+      Joblet joblet = jobletFactory.create(config);
       jobletStatusManager.start(id);
       joblet.run();
       jobletStatusManager.complete(id);

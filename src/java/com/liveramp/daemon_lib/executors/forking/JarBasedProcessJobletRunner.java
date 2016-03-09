@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.processes.ProcessUtil;
+import com.liveramp.daemon_lib.serialization.SerializationHelperFactory;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -25,7 +26,7 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
   }
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String cofigIdentifier, Map<String, String> envVariables, String workingDir) throws IOException, ClassNotFoundException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir, Class<? extends SerializationHelperFactory> serializationHelperFactoryClass) throws IOException, ClassNotFoundException {
     ProcessBuilder processBuilder =
         new ProcessBuilder(executableCommand,
             jarPath,
@@ -33,7 +34,8 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
             ForkedJobletRunner.quote(jobletFactoryClass.getName()),
             configStore.getPath(),
             workingDir,
-            cofigIdentifier);
+            configIdentifier,
+            serializationHelperFactoryClass.getName());
 
     processBuilder.environment().putAll(envVariables);
 
