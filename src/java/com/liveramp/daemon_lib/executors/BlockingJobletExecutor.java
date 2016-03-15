@@ -5,6 +5,7 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private final JobletFactory<T> jobletFactory;
@@ -24,6 +25,9 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
       joblet.run();
       successCallback.callback(jobletConfig);
     } catch (Exception e) {
+      if (failureCallback instanceof ExceptionContainer) {
+        ((ExceptionContainer)failureCallback).collectException(e);
+      }
       failureCallback.callback(jobletConfig);
     }
   }

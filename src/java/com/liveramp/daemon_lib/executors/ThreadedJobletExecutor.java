@@ -11,6 +11,7 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private static final Logger LOG = LoggerFactory.getLogger(ThreadedJobletExecutor.class);
@@ -38,6 +39,9 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
           successCallback.callback(config);
         } catch (Exception e) {
           LOG.error("Failed to call for config " + config, e);
+          if (failureCallback instanceof ExceptionContainer) {
+            ((ExceptionContainer)failureCallback).collectException(e);
+          }
           failureCallback.callback(config);
         }
         return null;
