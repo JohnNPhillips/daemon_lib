@@ -1,5 +1,7 @@
 package com.liveramp.daemon_lib.executors;
 
+import com.google.common.base.Optional;
+
 import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -26,7 +28,7 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
       successCallback.callback(jobletConfig);
     } catch (Exception e) {
       if (failureCallback instanceof ExceptionContainer) {
-        ((ExceptionContainer)failureCallback).collectException(e);
+        ((ExceptionContainer)failureCallback).collectException(Optional.of(e));
       }
       failureCallback.callback(jobletConfig);
     }

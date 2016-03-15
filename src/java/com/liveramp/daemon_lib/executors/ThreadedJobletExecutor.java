@@ -3,6 +3,7 @@ package com.liveramp.daemon_lib.executors;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
         } catch (Exception e) {
           LOG.error("Failed to call for config " + config, e);
           if (failureCallback instanceof ExceptionContainer) {
-            ((ExceptionContainer)failureCallback).collectException(e);
+            ((ExceptionContainer)failureCallback).collectException(Optional.of(e));
           }
           failureCallback.callback(config);
         }

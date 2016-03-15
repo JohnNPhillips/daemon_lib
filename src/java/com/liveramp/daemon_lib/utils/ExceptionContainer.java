@@ -2,10 +2,12 @@ package com.liveramp.daemon_lib.utils;
 
 import java.io.Serializable;
 
+import com.google.common.base.Optional;
+
 public interface ExceptionContainer extends Serializable {
 
-  void collectException(Exception exception);
+  void collectException(Optional<Exception> exception);
 
-  Exception retrieveException();
+  Optional<Exception> retrieveException();
 
 }
