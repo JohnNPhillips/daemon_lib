@@ -10,12 +10,14 @@ import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ThreadingDaemonBuilder<T>> {
 
   private final JobletFactory<T> jobletFactory;
   private JobletCallback<T> successCallback;
   private JobletCallback<T> failureCallback;
+  private ExceptionContainer exceptionContainer;
   private int maxThreads;
 
   private static final int DEFAULT_MAX_THREADS = 1;
@@ -29,6 +31,7 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
 
     this.successCallback = new JobletCallback.None<>();
     this.failureCallback = new JobletCallback.None<>();
+    this.exceptionContainer = new ExceptionContainer.None();
   }
 
   public ThreadingDaemonBuilder<T> setMaxThreads(int maxThreads) {
@@ -46,9 +49,14 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
     return this;
   }
 
+  public ThreadingDaemonBuilder<T> setExceptionContainer(ExceptionContainer exceptionContainer) {
+    this.exceptionContainer = exceptionContainer;
+    return this;
+  }
+
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
-    return JobletExecutors.Threaded.get(maxThreads, jobletFactory, successCallback, failureCallback);
+    return JobletExecutors.Threaded.get(maxThreads, jobletFactory, successCallback, failureCallback, exceptionContainer);
   }
 }

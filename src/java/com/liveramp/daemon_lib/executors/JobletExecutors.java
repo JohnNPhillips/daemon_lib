@@ -21,6 +21,7 @@ import com.liveramp.daemon_lib.executors.processes.local.LocalProcessController;
 import com.liveramp.daemon_lib.executors.processes.local.PsPidGetter;
 import com.liveramp.daemon_lib.tracking.DefaultJobletStatusManager;
 import com.liveramp.daemon_lib.tracking.JobletStatusManager;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 import com.liveramp.daemon_lib.utils.JobletProcessHandler;
@@ -29,8 +30,8 @@ public class JobletExecutors {
 
   public static class Blocking {
 
-    public static <T extends JobletConfig> BlockingJobletExecutor<T> get(JobletFactory<T> jobletFactory, JobletCallback<T> successCallback, JobletCallback<T> failureCallback) throws IllegalAccessException, InstantiationException {
-      return new BlockingJobletExecutor<>(jobletFactory, successCallback, failureCallback);
+    public static <T extends JobletConfig> BlockingJobletExecutor<T> get(JobletFactory<T> jobletFactory, JobletCallback<T> successCallback, JobletCallback<T> failureCallback, ExceptionContainer exceptionContainer) throws IllegalAccessException, InstantiationException {
+      return new BlockingJobletExecutor<>(jobletFactory, successCallback, failureCallback, exceptionContainer);
     }
   }
 
@@ -64,11 +65,11 @@ public class JobletExecutors {
 
   public static class Threaded {
     @Deprecated
-    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks) throws IllegalAccessException, InstantiationException {
-      return get(maxActiveJoblets, jobletFactoryClass.newInstance(), successCallbacks, failureCallbacks);
+    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks, ExceptionContainer exceptionContainer) throws IllegalAccessException, InstantiationException {
+      return get(maxActiveJoblets, jobletFactoryClass.newInstance(), successCallbacks, failureCallbacks, exceptionContainer);
     }
 
-    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, JobletFactory<T> jobletFactory, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks) throws IllegalAccessException, InstantiationException {
+    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, JobletFactory<T> jobletFactory, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks, ExceptionContainer exceptionContainer) throws IllegalAccessException, InstantiationException {
       Preconditions.checkNotNull(jobletFactory);
       Preconditions.checkArgument(maxActiveJoblets > 0);
 
@@ -77,7 +78,7 @@ public class JobletExecutors {
           new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
       );
 
-      return new ThreadedJobletExecutor<>(threadPool, jobletFactory, successCallbacks, failureCallbacks);
+      return new ThreadedJobletExecutor<>(threadPool, jobletFactory, successCallbacks, failureCallbacks, exceptionContainer);
     }
   }
 

@@ -6,8 +6,20 @@ import com.google.common.base.Optional;
 
 public interface ExceptionContainer extends Serializable {
 
-  void collectException(Optional<Exception> exception);
+  void collectException(Exception exception);
 
   Optional<Exception> retrieveException();
+
+  class None implements ExceptionContainer {
+
+    @Override
+    public void collectException(final Exception exception) {
+    }
+
+    @Override
+    public Optional<Exception> retrieveException() {
+      return Optional.absent();
+    }
+  }
 
 }

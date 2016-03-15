@@ -16,6 +16,7 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
   private ThreadedJobletExecutor<IDConfig> jobletExecutor;
   private JobletCallback<IDConfig> successCallback;
   private JobletCallback<IDConfig> failureCallback;
+  private ExceptionContainer exceptionContainer;
 
   @Before
   public void setUp() throws Exception {
@@ -37,7 +39,8 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     factory = mock(JobletFactory.class, RETURNS_DEEP_STUBS);
     successCallback = mock(JobletCallback.class);
     failureCallback = mock(JobletCallback.class);
-    jobletExecutor = new ThreadedJobletExecutor<>(pool, factory, successCallback, failureCallback);
+    exceptionContainer = mock(ExceptionContainer.class);
+    jobletExecutor = new ThreadedJobletExecutor<>(pool, factory, successCallback, failureCallback, exceptionContainer);
   }
 
   @After

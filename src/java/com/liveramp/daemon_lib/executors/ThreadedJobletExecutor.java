@@ -3,7 +3,6 @@ package com.liveramp.daemon_lib.executors;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +20,14 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
   private final JobletFactory<T> jobletFactory;
   private final JobletCallback<T> successCallback;
   private final JobletCallback<T> failureCallback;
+  private final ExceptionContainer exceptionContainer;
 
-  public ThreadedJobletExecutor(ThreadPoolExecutor threadPool, JobletFactory<T> jobletFactory, JobletCallback<T> successCallback, JobletCallback<T> failureCallback) {
+  public ThreadedJobletExecutor(ThreadPoolExecutor threadPool, JobletFactory<T> jobletFactory, JobletCallback<T> successCallback, JobletCallback<T> failureCallback, ExceptionContainer exceptionContainer) {
     this.threadPool = threadPool;
     this.jobletFactory = jobletFactory;
     this.successCallback = successCallback;
     this.failureCallback = failureCallback;
+    this.exceptionContainer = exceptionContainer;
   }
 
   @Override
@@ -40,9 +41,7 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
           successCallback.callback(config);
         } catch (Exception e) {
           LOG.error("Failed to call for config " + config, e);
-          if (failureCallback instanceof ExceptionContainer) {
-            ((ExceptionContainer)failureCallback).collectException(Optional.of(e));
-          }
+          exceptionContainer.collectException(e);
           failureCallback.callback(config);
         }
         return null;

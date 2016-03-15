@@ -10,14 +10,15 @@ import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, BlockingDaemonBuilder<T>> {
 
   private final JobletFactory<T> jobletFactory;
 
-
   private JobletCallback<T> successCallback;
   private JobletCallback<T> failureCallback;
+  private ExceptionContainer exceptionContainer;
 
   public BlockingDaemonBuilder(String identifier, JobletFactory<T> jobletFactory, JobletConfigProducer<T> configProducer) {
     super(identifier, configProducer);
@@ -25,6 +26,7 @@ public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBui
 
     this.successCallback = new JobletCallback.None<>();
     this.failureCallback = new JobletCallback.None<>();
+    this.exceptionContainer = new ExceptionContainer.None();
   }
 
   public BlockingDaemonBuilder<T> setSuccessCallback(JobletCallback<T> callback) {
@@ -37,9 +39,14 @@ public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBui
     return this;
   }
 
+  public BlockingDaemonBuilder<T> setExceptionContainer(ExceptionContainer exceptionContainer) {
+    this.exceptionContainer = exceptionContainer;
+    return this;
+  }
+
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
-    return JobletExecutors.Blocking.get(jobletFactory, successCallback, failureCallback);
+    return JobletExecutors.Blocking.get(jobletFactory, successCallback, failureCallback, exceptionContainer);
   }
 }
