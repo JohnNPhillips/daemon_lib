@@ -25,7 +25,7 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
   }
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String cofigIdentifier, Map<String, String> envVariables, String workingDir) throws IOException, ClassNotFoundException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException, ClassNotFoundException {
     ProcessBuilder processBuilder =
         new ProcessBuilder(executableCommand,
             jarPath,
@@ -33,7 +33,7 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
             ForkedJobletRunner.quote(jobletFactoryClass.getName()),
             configStore.getPath(),
             workingDir,
-            cofigIdentifier);
+            configIdentifier);
 
     processBuilder.environment().putAll(envVariables);
 

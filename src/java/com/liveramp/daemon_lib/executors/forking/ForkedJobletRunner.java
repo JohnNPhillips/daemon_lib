@@ -22,10 +22,10 @@ public class ForkedJobletRunner implements ProcessJobletRunner {
   private static final String JOBLET_RUNNER_SCRIPT_SOURCE = "com/liveramp/daemon_lib/utils/joblet_runner.txt";
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String cofigIdentifier, Map<String, String> envVariables, String workingDir) throws IOException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException {
     prepareScript();
 
-    ProcessBuilder processBuilder = new ProcessBuilder(JOBLET_RUNNER_SCRIPT, quote(jobletFactoryClass.getName()), configStore.getPath(), workingDir, cofigIdentifier);
+    ProcessBuilder processBuilder = new ProcessBuilder(JOBLET_RUNNER_SCRIPT, quote(jobletFactoryClass.getName()), configStore.getPath(), workingDir, configIdentifier);
     processBuilder.environment().putAll(envVariables);
     int pid = ProcessUtil.run(processBuilder);
 
