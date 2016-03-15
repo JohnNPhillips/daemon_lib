@@ -15,6 +15,7 @@ import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 
 public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ForkingDaemonBuilder<T>> {
 
@@ -24,6 +25,7 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
   private Map<String, String> envVariables;
   private JobletCallback<T> successCallback;
   private JobletCallback<T> failureCallback;
+  private ExceptionContainer exceptionContainer;
   private ProcessJobletRunner jobletRunner;
 
   private static final int DEFAULT_MAX_PROCESSES = 1;
@@ -35,10 +37,11 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
     this.jobletFactoryClass = jobletFactoryClass;
     this.jobletRunner = jobletRunner;
 
-    maxProcesses = DEFAULT_MAX_PROCESSES;
-    envVariables = DEFAULT_ENV_VARS;
-    successCallback = new JobletCallback.None<>();
-    failureCallback = new JobletCallback.None<>();
+    this.maxProcesses = DEFAULT_MAX_PROCESSES;
+    this.envVariables = DEFAULT_ENV_VARS;
+    this.successCallback = new JobletCallback.None<>();
+    this.failureCallback = new JobletCallback.None<>();
+    this.exceptionContainer = new ExceptionContainer.None();
   }
 
   public ForkingDaemonBuilder<T> setMaxProcesses(int maxProcesses) {
@@ -61,6 +64,11 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
     return this;
   }
 
+  public ForkingDaemonBuilder<T> setExceptionContainer(ExceptionContainer exceptionContainer) {
+    this.exceptionContainer = exceptionContainer;
+    return this;
+  }
+
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
@@ -69,6 +77,6 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
     }
 
     final String tmpPath = new File(workingDir, identifier).getPath();
-    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner);
+    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, exceptionContainer, jobletRunner);
   }
 }
