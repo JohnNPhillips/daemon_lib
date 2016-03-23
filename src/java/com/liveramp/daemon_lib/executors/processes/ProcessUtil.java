@@ -1,6 +1,9 @@
 package com.liveramp.daemon_lib.executors.processes;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -13,8 +16,19 @@ public class ProcessUtil {
     Process process = processBuiler.start();
 
     process.getInputStream().close();
-    process.getErrorStream().close();
     process.getOutputStream().close();
+
+    try (InputStream errorStream = process.getErrorStream()) {
+      BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+      String errorLine;
+      StringBuilder errorBuffer = new StringBuilder();
+      while ((errorLine = errorReader.readLine()) != null) {
+        errorBuffer.append(errorLine);
+      }
+      exceptionContainer.collect(new RuntimeException(errorBuffer.toString()));
+    } catch (Exception e) {
+      exceptionContainer.collect(e);
+    }
 
     int pid;
     // Non portable way to get process pid

@@ -27,7 +27,7 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
       joblet.run();
       successCallback.callback(jobletConfig);
     } catch (Exception e) {
-      exceptionContainer.collectException(e);
+      exceptionContainer.collect(e);
       failureCallback.callback(jobletConfig);
     }
   }

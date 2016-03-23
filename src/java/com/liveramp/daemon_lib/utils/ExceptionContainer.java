@@ -3,35 +3,50 @@ package com.liveramp.daemon_lib.utils;
 import java.io.Serializable;
 
 import com.google.common.base.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public interface ExceptionContainer extends Serializable {
 
-  void collectException(Exception exception);
+  void collect(Exception exception);
 
-  Optional<Exception> retrieveException();
+  @NotNull
+  Optional<Exception> retrieve();
+
+  void clear();
 
   class None implements ExceptionContainer {
     @Override
-    public void collectException(final Exception exception) {
+    public void collect(final Exception exception) {
     }
 
     @Override
-    public Optional<Exception> retrieveException() {
+    @NotNull
+    public Optional<Exception> retrieve() {
       return Optional.absent();
+    }
+
+    @Override
+    public void clear() {
     }
   }
 
   class Default implements ExceptionContainer {
-    private Optional<Exception> exception = Optional.absent();
+    private Optional<Exception> exception;
 
     @Override
-    public void collectException(final Exception exception) {
+    public void collect(final Exception exception) {
       this.exception = Optional.of(exception);
     }
 
+    @NotNull
     @Override
-    public Optional<Exception> retrieveException() {
+    public Optional<Exception> retrieve() {
       return exception;
+    }
+
+    @Override
+    public void clear() {
+      this.exception = Optional.absent();
     }
   }
 
