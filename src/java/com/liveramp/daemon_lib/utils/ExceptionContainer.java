@@ -11,7 +11,6 @@ public interface ExceptionContainer extends Serializable {
   Optional<Exception> retrieveException();
 
   class None implements ExceptionContainer {
-
     @Override
     public void collectException(final Exception exception) {
     }
@@ -19,6 +18,20 @@ public interface ExceptionContainer extends Serializable {
     @Override
     public Optional<Exception> retrieveException() {
       return Optional.absent();
+    }
+  }
+
+  class Default implements ExceptionContainer {
+    private Optional<Exception> exception = Optional.absent();
+
+    @Override
+    public void collectException(final Exception exception) {
+      this.exception = Optional.of(exception);
+    }
+
+    @Override
+    public Optional<Exception> retrieveException() {
+      return exception;
     }
   }
 
