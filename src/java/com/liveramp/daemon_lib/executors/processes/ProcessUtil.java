@@ -5,9 +5,11 @@ import java.lang.reflect.Field;
 
 import org.apache.commons.lang.NotImplementedException;
 
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
+
 public class ProcessUtil {
 
-  public static int run(ProcessBuilder processBuiler) throws IOException {
+  public static int run(ProcessBuilder processBuiler, ExceptionContainer exceptionContainer) throws IOException {
     Process process = processBuiler.start();
 
     process.getInputStream().close();

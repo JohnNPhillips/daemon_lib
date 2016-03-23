@@ -59,6 +59,7 @@ public class JobletExecutors {
       return new ForkedJobletExecutor.Builder<>(tmpPath, jobletFactoryClass, configStore, processController, jobletRunner)
           .setMaxProcesses(maxProcesses)
           .putAllEnvVariables(envVariables)
+          .setExceptionContainer(exceptionContainer)
           .build();
     }
   }

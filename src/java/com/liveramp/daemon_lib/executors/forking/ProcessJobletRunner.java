@@ -5,8 +5,9 @@ import java.util.Map;
 
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
 public interface ProcessJobletRunner {
-  int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException, ClassNotFoundException;
+  int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir, ExceptionContainer exceptionContainer) throws IOException, ClassNotFoundException;
 }

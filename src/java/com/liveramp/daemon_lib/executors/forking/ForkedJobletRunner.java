@@ -15,6 +15,7 @@ import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.processes.ProcessUtil;
 import com.liveramp.daemon_lib.tracking.DefaultJobletStatusManager;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
 public class ForkedJobletRunner implements ProcessJobletRunner {
@@ -22,12 +23,12 @@ public class ForkedJobletRunner implements ProcessJobletRunner {
   private static final String JOBLET_RUNNER_SCRIPT_SOURCE = "com/liveramp/daemon_lib/utils/joblet_runner.txt";
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir, ExceptionContainer exceptionContainer) throws IOException {
     prepareScript();
 
     ProcessBuilder processBuilder = new ProcessBuilder(JOBLET_RUNNER_SCRIPT, quote(jobletFactoryClass.getName()), configStore.getPath(), workingDir, configIdentifier);
     processBuilder.environment().putAll(envVariables);
-    int pid = ProcessUtil.run(processBuilder);
+    int pid = ProcessUtil.run(processBuilder, exceptionContainer);
 
     return pid;
   }

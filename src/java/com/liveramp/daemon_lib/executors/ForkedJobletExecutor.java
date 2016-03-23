@@ -10,6 +10,7 @@ import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
@@ -21,8 +22,9 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
   private final Class<? extends JobletFactory<? extends T>> jobletFactoryClass;
   private final Map<String, String> envVariables;
   private final String workingDir;
+  private final ExceptionContainer exceptionContainer;
 
-  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir) {
+  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, ExceptionContainer exceptionContainer) {
     this.maxProcesses = maxProcesses;
     this.jobletFactoryClass = jobletFactoryClass;
     this.configStorage = configStorage;
@@ -30,13 +32,14 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     this.jobletRunner = jobletRunner;
     this.envVariables = envVariables;
     this.workingDir = workingDir;
+    this.exceptionContainer = exceptionContainer;
   }
 
   @Override
   public void execute(T config) throws DaemonException {
     try {
       String identifier = configStorage.storeConfig(config);
-      int pid = jobletRunner.run(jobletFactoryClass, configStorage, identifier, envVariables, workingDir);
+      int pid = jobletRunner.run(jobletFactoryClass, configStorage, identifier, envVariables, workingDir, exceptionContainer);
       processController.registerProcess(pid, new JobletConfigMetadata(identifier));
     } catch (Exception e) {
       throw new DaemonException(e);
@@ -67,6 +70,7 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     private ProcessJobletRunner jobletRunner;
     private Map<String, String> envVariables;
     private String workingDir;
+    private ExceptionContainer exceptionContainer;
 
     public Builder(String workingDir, Class<? extends JobletFactory<? extends S>> jobletFactoryClass, JobletConfigStorage<S> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner) {
       this.workingDir = workingDir;
@@ -77,6 +81,7 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       this.maxProcesses = DEFAULT_MAX_PROCESSES;
       this.envVariables = new HashMap<>();
       this.jobletRunner = jobletRunner;
+      this.exceptionContainer = new ExceptionContainer.None();
     }
 
     public Builder<S> setMaxProcesses(int maxProcesses) {
@@ -119,8 +124,13 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       return this;
     }
 
+    public Builder<S> setExceptionContainer(ExceptionContainer exceptionContainer) {
+      this.exceptionContainer = exceptionContainer;
+      return this;
+    }
+
     public ForkedJobletExecutor<S> build() throws IOException {
-      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir);
+      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, exceptionContainer);
     }
   }
 }

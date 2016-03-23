@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.processes.ProcessUtil;
+import com.liveramp.daemon_lib.utils.ExceptionContainer;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -25,7 +26,7 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
   }
 
   @Override
-  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir) throws IOException, ClassNotFoundException {
+  public int run(Class<? extends JobletFactory<? extends JobletConfig>> jobletFactoryClass, JobletConfigStorage configStore, String configIdentifier, Map<String, String> envVariables, String workingDir, ExceptionContainer exceptionContainer) throws IOException, ClassNotFoundException {
     ProcessBuilder processBuilder =
         new ProcessBuilder(executableCommand,
             jarPath,
@@ -39,7 +40,7 @@ public class JarBasedProcessJobletRunner implements ProcessJobletRunner {
 
     LOG.debug("Running command: {}", Joiner.on(' ').join(processBuilder.command()));
 
-    int pid = ProcessUtil.run(processBuilder);
+    int pid = ProcessUtil.run(processBuilder, exceptionContainer);
 
     return pid;
   }
