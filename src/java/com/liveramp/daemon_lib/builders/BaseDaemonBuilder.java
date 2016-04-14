@@ -4,15 +4,15 @@ import java.io.IOException;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.Daemon;
 import com.liveramp.daemon_lib.DaemonLock;
+import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
-import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
+import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
 
 public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> {
   protected final String identifier;
@@ -20,12 +20,16 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   protected DaemonNotifier notifier;
   private final Daemon.Options options;
   private JobletCallback<T> onNewConfigCallback;
+  protected JobletCallback<T> successCallback;
+  protected JobletCallback<T> failureCallback;
   private DaemonLock lock;
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
     this.identifier = identifier;
     this.configProducer = configProducer;
     this.onNewConfigCallback = new JobletCallback.None<>();
+    this.successCallback = new JobletCallback.None<>();
+    this.failureCallback = new JobletCallback.None<>();
     this.lock = new NoOpDaemonLock();
 
     this.options = new Daemon.Options();
@@ -74,6 +78,22 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
    */
   public K setOnNewConfigCallback(JobletCallback<T> callback) {
     this.onNewConfigCallback = callback;
+    return self();
+  }
+
+  /**
+   * The callback for when the joblet execution succeeds.
+   */
+  public K setSuccessCallback(JobletCallback<T> successCallback) {
+    this.successCallback = successCallback;
+    return self();
+  }
+
+  /**
+   * The callback for when the joblet execution fails.
+   */
+  public K setFailureCallback(JobletCallback<T> failureCallback) {
+    this.failureCallback = failureCallback;
     return self();
   }
 

@@ -15,26 +15,9 @@ public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBui
 
   private final JobletFactory<T> jobletFactory;
 
-
-  private JobletCallback<T> successCallback;
-  private JobletCallback<T> failureCallback;
-
   public BlockingDaemonBuilder(String identifier, JobletFactory<T> jobletFactory, JobletConfigProducer<T> configProducer) {
     super(identifier, configProducer);
     this.jobletFactory = jobletFactory;
-
-    this.successCallback = new JobletCallback.None<>();
-    this.failureCallback = new JobletCallback.None<>();
-  }
-
-  public BlockingDaemonBuilder<T> setSuccessCallback(JobletCallback<T> callback) {
-    this.successCallback = callback;
-    return this;
-  }
-
-  public BlockingDaemonBuilder<T> setFailureCallback(JobletCallback<T> callback) {
-    this.failureCallback = callback;
-    return this;
   }
 
   @NotNull
