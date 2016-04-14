@@ -69,10 +69,12 @@ public class Daemon<T extends JobletConfig> {
 
   private boolean running;
   private final JobletCallback<T> preExecutionCallback;
+  private final JobletCallback<T> failureCallback;
   private DaemonLock lock;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options) {
+  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, JobletCallback<T> failureCallback, DaemonLock lock, DaemonNotifier notifier, Options options) {
     this.preExecutionCallback = preExecutionCallback;
+    this.failureCallback = failureCallback;
     this.identifier = clean(identifier);
     this.configProducer = configProducer;
     this.executor = executor;
@@ -122,7 +124,7 @@ public class Daemon<T extends JobletConfig> {
         try {
           preExecutionCallback.callback(jobletConfig);
         } catch (DaemonException e) {
-          notifier.notify("Error executing callbacks for daemon (" + identifier + ")",
+          notifier.notify("Error executing pre execution callback for daemon (" + identifier + ")",
               Optional.of(jobletConfig.toString() + "\n" + preExecutionCallback.toString()),
               Optional.of(e));
           return false;
@@ -135,6 +137,7 @@ public class Daemon<T extends JobletConfig> {
           notifier.notify("Error executing joblet config for daemon (" + identifier + ")",
               Optional.of(jobletConfig.toString()),
               Optional.of(e));
+          notifyingFailureCallback(jobletConfig);
           return false;
         }
       } else {
@@ -146,6 +149,16 @@ public class Daemon<T extends JobletConfig> {
     }
 
     return true;
+  }
+
+  private void notifyingFailureCallback(T jobletConfig) {
+    try {
+      failureCallback.callback(jobletConfig);
+    } catch (DaemonException e) {
+      notifier.notify("Error executing failure callback for daemon (" + identifier + ")",
+          Optional.of(jobletConfig.toString() + "\n" + failureCallback.toString()),
+          Optional.of(e));
+    }
   }
 
   public final void stop() {
