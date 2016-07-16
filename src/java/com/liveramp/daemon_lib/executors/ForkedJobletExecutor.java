@@ -4,29 +4,30 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.executors.processes.DefaultSlotChecker;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultForkedExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.executors.processes.SlotChecker;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
   private final JobletConfigStorage<T> configStorage;
   private final ProcessController<JobletConfigMetadata> processController;
   private final ProcessJobletRunner jobletRunner;
+  private int maxProcesses;
   private final Class<? extends JobletFactory<? extends T>> jobletFactoryClass;
   private final Map<String, String> envVariables;
   private final String workingDir;
   private final JobletCallback<T> failureCallback;
-  private List<SlotChecker> slotCheckers;
+  private final ExecutionCondition executionCondition;
 
-  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, JobletCallback<T> failureCallback, List<SlotChecker> slotCheckers) {
+  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, JobletCallback<T> failureCallback, ExecutionCondition executionCondition) {
+    this.maxProcesses = maxProcesses;
     this.jobletFactoryClass = jobletFactoryClass;
     this.configStorage = configStorage;
     this.processController = processController;
@@ -34,8 +35,7 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     this.envVariables = envVariables;
     this.workingDir = workingDir;
     this.failureCallback = failureCallback;
-    this.slotCheckers = slotCheckers;
-    this.slotCheckers.add(new DefaultSlotChecker(processController, maxProcesses));
+    this.executionCondition = executionCondition;
   }
 
   @Override
@@ -52,12 +52,8 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
 
   @Override
   public boolean canExecuteAnother() {
-    for (SlotChecker slotChecker : slotCheckers) {
-      if (!slotChecker.canExecute()) {
-        return false;
-      }
-    }
-    return true;
+    final DefaultForkedExecutionCondition defaultExecutionCondition = new DefaultForkedExecutionCondition(processController, maxProcesses);
+    return executionCondition.canExecute() && defaultExecutionCondition.canExecute();
   }
 
   @Override
@@ -76,7 +72,7 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     private Map<String, String> envVariables;
     private String workingDir;
     private JobletCallback<S> failureCallback;
-    private List<SlotChecker> slotCheckers;
+    private ExecutionCondition   executionCondition;
 
     public Builder(String workingDir, Class<? extends JobletFactory<? extends S>> jobletFactoryClass, JobletConfigStorage<S> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, JobletCallback<S> failureCallback) {
       this.workingDir = workingDir;
@@ -135,13 +131,13 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       return this;
     }
 
-    public Builder<S> setSlotCheckers(List<SlotChecker> slotCheckers) {
-      this.slotCheckers = slotCheckers;
+    public Builder<S> setExecutionConditions(ExecutionCondition executionCondition) {
+      this.executionCondition = executionCondition;
       return this;
     }
 
     public ForkedJobletExecutor<S> build() throws IOException {
-      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, failureCallback, slotCheckers);
+      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, failureCallback, executionCondition);
     }
   }
 }

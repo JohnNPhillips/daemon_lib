@@ -1,18 +1,19 @@
 package com.liveramp.daemon_lib.builders;
 
-import java.io.IOException;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.Daemon;
 import com.liveramp.daemon_lib.DaemonLock;
+import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
-import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionConditions;
+import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> {
   protected final String identifier;
@@ -21,6 +22,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   private final Daemon.Options options;
   private JobletCallback<T> onNewConfigCallback;
   private DaemonLock lock;
+  protected ExecutionCondition additionalExecutionCondition = ExecutionConditions.alwaysExecute();
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
     this.identifier = identifier;
@@ -86,15 +88,24 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
     return self();
   }
 
+  public K setExecutionCondition(ExecutionCondition executionCondition) {
+    this.additionalExecutionCondition = executionCondition;
+    return self();
+  }
+
   @SuppressWarnings("unchecked")
   private K self() {
-    return (K)this;
+    return (K) this;
   }
 
   @NotNull
   protected abstract JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException;
 
+  @NotNull
+  protected abstract ExecutionCondition getDefaultExecutionCondition();
+
   public Daemon<T> build() throws IllegalAccessException, IOException, InstantiationException {
-    return new Daemon<>(identifier, getExecutor(), configProducer, onNewConfigCallback, lock, notifier, options);
+
+    return new Daemon<>(identifier, getExecutor(), configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(getDefaultExecutionCondition(), additionalExecutionCondition));
   }
 }
