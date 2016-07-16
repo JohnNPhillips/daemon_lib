@@ -15,7 +15,7 @@ public class DefaultForkedExecutionCondition implements ExecutionCondition {
   @Override
   public boolean canExecute() {
     try {
-      return processController.getProcesses().size() > maxProcesses;
+      return processController.getProcesses().size() < maxProcesses;
     } catch (ProcessControllerException e) {
       return false;
     }
