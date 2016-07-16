@@ -1,5 +1,6 @@
 package com.liveramp.daemon_lib.builders;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -9,9 +10,9 @@ import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
+import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultForkedExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +83,7 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
   @NotNull
   @Override
   protected ExecutionCondition getDefaultExecutionCondition() {
+    Preconditions.checkNotNull(processController);
     return new DefaultForkedExecutionCondition(processController, maxProcesses);
   }
 }

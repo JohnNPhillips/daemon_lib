@@ -1,5 +1,6 @@
 package com.liveramp.daemon_lib.builders;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -64,6 +65,7 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
   @NotNull
   @Override
   protected ExecutionCondition getDefaultExecutionCondition() {
+    Preconditions.checkNotNull(threadPool);
     return new DefaultThreadedExecutionCondition(threadPool);
   }
 }
