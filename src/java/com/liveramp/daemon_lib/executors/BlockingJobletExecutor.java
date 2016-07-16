@@ -29,11 +29,6 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
   }
 
   @Override
-  public boolean canExecuteAnother() {
-    return true;
-  }
-
-  @Override
   public void shutdown() {
 
   }

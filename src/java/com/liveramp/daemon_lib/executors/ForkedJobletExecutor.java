@@ -4,8 +4,6 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultForkedExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
@@ -24,9 +22,8 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
   private final Map<String, String> envVariables;
   private final String workingDir;
   private final JobletCallback<T> failureCallback;
-  private final ExecutionCondition executionCondition;
 
-  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, JobletCallback<T> failureCallback, ExecutionCondition executionCondition) {
+  ForkedJobletExecutor(int maxProcesses, Class<? extends JobletFactory<? extends T>> jobletFactoryClass, JobletConfigStorage<T> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, Map<String, String> envVariables, String workingDir, JobletCallback<T> failureCallback) {
     this.maxProcesses = maxProcesses;
     this.jobletFactoryClass = jobletFactoryClass;
     this.configStorage = configStorage;
@@ -35,7 +32,6 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     this.envVariables = envVariables;
     this.workingDir = workingDir;
     this.failureCallback = failureCallback;
-    this.executionCondition = executionCondition;
   }
 
   @Override
@@ -48,12 +44,6 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       failureCallback.callback(config);
       throw new DaemonException(e);
     }
-  }
-
-  @Override
-  public boolean canExecuteAnother() {
-    final DefaultForkedExecutionCondition defaultExecutionCondition = new DefaultForkedExecutionCondition(processController, maxProcesses);
-    return executionCondition.canExecute() && defaultExecutionCondition.canExecute();
   }
 
   @Override
@@ -72,7 +62,6 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
     private Map<String, String> envVariables;
     private String workingDir;
     private JobletCallback<S> failureCallback;
-    private ExecutionCondition   executionCondition;
 
     public Builder(String workingDir, Class<? extends JobletFactory<? extends S>> jobletFactoryClass, JobletConfigStorage<S> configStorage, ProcessController<JobletConfigMetadata> processController, ProcessJobletRunner jobletRunner, JobletCallback<S> failureCallback) {
       this.workingDir = workingDir;
@@ -131,13 +120,8 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       return this;
     }
 
-    public Builder<S> setExecutionConditions(ExecutionCondition executionCondition) {
-      this.executionCondition = executionCondition;
-      return this;
-    }
-
     public ForkedJobletExecutor<S> build() throws IOException {
-      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, failureCallback, executionCondition);
+      return new ForkedJobletExecutor<>(maxProcesses, jobletFactoryClass, configStorage, processController, jobletRunner, envVariables, workingDir, failureCallback);
     }
   }
 }

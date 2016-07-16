@@ -64,6 +64,6 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
   @NotNull
   @Override
   protected ExecutionCondition getDefaultExecutionCondition() {
-    return new DefaultThreadedExecutionCondition(threadPool, maxThreads);
+    return new DefaultThreadedExecutionCondition(threadPool);
   }
 }
