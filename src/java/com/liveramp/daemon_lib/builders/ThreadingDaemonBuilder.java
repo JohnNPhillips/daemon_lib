@@ -1,6 +1,5 @@
 package com.liveramp.daemon_lib.builders;
 
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -8,8 +7,6 @@ import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -60,12 +57,5 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
         new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
     );
     return JobletExecutors.Threaded.get(jobletFactory, successCallback, failureCallback, threadPool);
-  }
-
-  @NotNull
-  @Override
-  protected ExecutionCondition getDefaultExecutionCondition() {
-    Preconditions.checkNotNull(threadPool);
-    return new DefaultThreadedExecutionCondition(threadPool);
   }
 }

@@ -4,6 +4,8 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionConditions;
 import com.liveramp.daemon_lib.utils.DaemonException;
 
 public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExecutor<T> {
@@ -26,6 +28,11 @@ public class BlockingJobletExecutor<T extends JobletConfig> implements JobletExe
     } catch (Exception e) {
       failureCallback.callback(jobletConfig);
     }
+  }
+
+  @Override
+  public ExecutionCondition getDefaultExecutionCondition() {
+    return ExecutionConditions.alwaysExecute();
   }
 
   @Override

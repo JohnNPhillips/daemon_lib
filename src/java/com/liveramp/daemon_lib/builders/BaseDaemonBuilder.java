@@ -102,10 +102,10 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   protected abstract JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException;
 
   @NotNull
-  protected abstract ExecutionCondition getDefaultExecutionCondition();
-
   public Daemon<T> build() throws IllegalAccessException, IOException, InstantiationException {
 
-    return new Daemon<>(identifier, getExecutor(), configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(getDefaultExecutionCondition(), additionalExecutionCondition));
+    final JobletExecutor<T> executor = getExecutor();
+
+    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalExecutionCondition));
   }
 }

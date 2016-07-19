@@ -6,8 +6,6 @@ import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionConditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -42,11 +40,5 @@ public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBui
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
     return JobletExecutors.Blocking.get(jobletFactory, successCallback, failureCallback);
-  }
-
-  @NotNull
-  @Override
-  protected ExecutionCondition getDefaultExecutionCondition() {
-    return ExecutionConditions.alwaysExecute();
   }
 }

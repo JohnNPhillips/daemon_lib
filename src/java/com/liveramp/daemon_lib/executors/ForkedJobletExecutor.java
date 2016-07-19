@@ -5,6 +5,8 @@ import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultForkedExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
@@ -44,6 +46,11 @@ public class ForkedJobletExecutor<T extends JobletConfig> implements JobletExecu
       failureCallback.callback(config);
       throw new DaemonException(e);
     }
+  }
+
+  @Override
+  public ExecutionCondition getDefaultExecutionCondition() {
+    return new DefaultForkedExecutionCondition(processController, maxProcesses);
   }
 
   @Override
