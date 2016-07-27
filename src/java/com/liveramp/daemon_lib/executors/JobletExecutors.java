@@ -61,14 +61,14 @@ public class JobletExecutors {
 
   public static class Threaded {
     @Deprecated
-    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxThreads, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks, Class<? extends JobletFactory<T>> jobletFactoryClass) throws IllegalAccessException, InstantiationException {
-      return get(maxThreads, successCallbacks, failureCallbacks, jobletFactoryClass.newInstance());
+    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks) throws IllegalAccessException, InstantiationException {
+      return get(maxActiveJoblets, jobletFactoryClass.newInstance(), failureCallbacks, successCallbacks);
     }
 
-    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxThreads, JobletCallback<T> successCallbacks, JobletCallback<T> failureCallbacks, JobletFactory<T> jobletFactory) throws IllegalAccessException, InstantiationException {
+    public static <T extends JobletConfig> ThreadedJobletExecutor<T> get(int maxActiveJoblets, JobletFactory<T> jobletFactory, JobletCallback<T> failureCallbacks, JobletCallback<T> successCallbacks) throws IllegalAccessException, InstantiationException {
       Preconditions.checkNotNull(jobletFactory);
       ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(
-          maxThreads,
+          maxActiveJoblets,
           new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
       );
 
