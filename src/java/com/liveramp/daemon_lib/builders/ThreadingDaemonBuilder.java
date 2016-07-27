@@ -1,6 +1,5 @@
 package com.liveramp.daemon_lib.builders;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
@@ -10,8 +9,6 @@ import com.liveramp.daemon_lib.executors.JobletExecutors;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ThreadingDaemonBuilder<T>> {
 
@@ -21,7 +18,6 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
   private int maxThreads;
 
   private static final int DEFAULT_MAX_THREADS = 1;
-  private ThreadPoolExecutor threadPool;
 
 
   public ThreadingDaemonBuilder(String identifier, JobletFactory<T> jobletFactory, JobletConfigProducer<T> configProducer) {
@@ -52,10 +48,6 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
-    threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(
-        maxThreads,
-        new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
-    );
-    return JobletExecutors.Threaded.get(jobletFactory, successCallback, failureCallback, threadPool);
+    return JobletExecutors.Threaded.get(maxThreads, jobletFactory, successCallback, failureCallback);
   }
 }

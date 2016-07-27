@@ -9,9 +9,6 @@ import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
-import com.liveramp.daemon_lib.executors.processes.ProcessController;
-import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
-import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -30,7 +27,6 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
 
   private static final int DEFAULT_MAX_PROCESSES = 1;
   private static final Map<String, String> DEFAULT_ENV_VARS = Maps.newHashMap();
-  private ProcessController<JobletConfigMetadata> processController;
 
   public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> configProducer, ProcessJobletRunner jobletRunner) {
     super(identifier, configProducer);
@@ -71,9 +67,6 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
       jobletRunner = ProcessJobletRunners.production();
     }
     final String tmpPath = new File(workingDir, identifier).getPath();
-    File configStoreDir = new File(tmpPath, "config_store");
-    JobletConfigStorage<T> configStore = JobletConfigStorage.production(configStoreDir.getPath());
-    processController = JobletExecutors.Forked.getProcessController(tmpPath, notifier, successCallback, failureCallback, configStore);
-    return JobletExecutors.Forked.get(tmpPath, maxProcesses, jobletFactoryClass, envVariables, failureCallback, jobletRunner, configStore, processController);
+    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner);
   }
 }
