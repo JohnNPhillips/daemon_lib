@@ -2,6 +2,7 @@ package com.liveramp.daemon_lib;
 
 import com.google.common.base.Optional;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
@@ -74,10 +75,12 @@ public class Daemon<T extends JobletConfig> {
   private final JobletCallback<T> preExecutionCallback;
   private DaemonLock lock;
   private final PreconfigExecutionCondition preconfigExecutionCondition;
+  private final PostConfigExecutionCondition<T> postConfigExecutionCondition;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreconfigExecutionCondition preconfigExecutionCondition) {
+  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreconfigExecutionCondition preconfigExecutionCondition, PostConfigExecutionCondition<T> postConfigExecutionCondition) {
     this.preExecutionCallback = preExecutionCallback;
     this.preconfigExecutionCondition = preconfigExecutionCondition;
+    this.postConfigExecutionCondition = postConfigExecutionCondition;
     this.identifier = clean(identifier);
     this.configProducer = configProducer;
     this.executor = executor;
@@ -122,7 +125,7 @@ public class Daemon<T extends JobletConfig> {
         return false;
       }
 
-      if (jobletConfig != null) {
+      if (jobletConfig != null && postConfigExecutionCondition.canExecute(jobletConfig)) {
         LOG.info("Found joblet config: " + jobletConfig);
         try {
           preExecutionCallback.callback(jobletConfig);

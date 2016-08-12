@@ -28,7 +28,7 @@ public class TestDaemon extends DaemonLibTestCase {
     this.configProducer = mock(JobletConfigProducer.class);
     this.preconfigExecutionCondition = mock(PreconfigExecutionCondition.class);
     this.daemon = new Daemon("identifier", executor, configProducer, new JobletCallback.None<>(),
-        new NoOpDaemonLock(), mock(DaemonNotifier.class), new Daemon.Options(), preconfigExecutionCondition);
+        new NoOpDaemonLock(), mock(DaemonNotifier.class), new Daemon.Options(), preconfigExecutionCondition, postConfigExecutionCondition);
   }
 
   @Test
