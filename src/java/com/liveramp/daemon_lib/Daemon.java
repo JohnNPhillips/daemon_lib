@@ -3,7 +3,7 @@ package com.liveramp.daemon_lib;
 import com.google.common.base.Optional;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreConfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +74,12 @@ public class Daemon<T extends JobletConfig> {
   private boolean running;
   private final JobletCallback<T> preExecutionCallback;
   private DaemonLock lock;
-  private final PreConfigExecutionCondition preConfigExecutionCondition;
+  private final PreconfigExecutionCondition preconfigExecutionCondition;
   private final PostConfigExecutionCondition<T> postConfigExecutionCondition;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreConfigExecutionCondition preConfigExecutionCondition, PostConfigExecutionCondition<T> postConfigExecutionCondition) {
+  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreconfigExecutionCondition preconfigExecutionCondition, PostConfigExecutionCondition<T> postConfigExecutionCondition) {
     this.preExecutionCallback = preExecutionCallback;
-    this.preConfigExecutionCondition = preConfigExecutionCondition;
+    this.preconfigExecutionCondition = preconfigExecutionCondition;
     this.postConfigExecutionCondition = postConfigExecutionCondition;
     this.identifier = clean(identifier);
     this.configProducer = configProducer;
@@ -114,7 +114,7 @@ public class Daemon<T extends JobletConfig> {
   }
 
   protected boolean processNext() {
-    if (preConfigExecutionCondition.canExecute()) {
+    if (preconfigExecutionCondition.canExecute()) {
       T jobletConfig;
       try {
         lock.lock();

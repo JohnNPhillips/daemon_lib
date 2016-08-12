@@ -1,21 +1,21 @@
 package com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig;
 
-public class PreConfigExecutionConditions {
-  public static PreConfigExecutionCondition and(PreConfigExecutionCondition condition1, PreConfigExecutionCondition condition2) {
-    return new AndCompositePreConfigExecutionCondition(condition1, condition2);
+public class PreconfigExecutionConditions {
+  public static PreconfigExecutionCondition and(PreconfigExecutionCondition condition1, PreconfigExecutionCondition condition2) {
+    return new AndCompositePreconfigExecutionCondition(condition1, condition2);
 
   }
 
-  public static PreConfigExecutionCondition or(PreConfigExecutionCondition condition1, PreConfigExecutionCondition condition2) {
-    return new OrCompositePreConfigExecutionCondition(condition1, condition2);
+  public static PreconfigExecutionCondition or(PreconfigExecutionCondition condition1, PreconfigExecutionCondition condition2) {
+    return new OrCompositePreconfigExecutionCondition(condition1, condition2);
 
   }
 
-  public static PreConfigExecutionCondition alwaysExecute() {
-    return new AlwaysPreConfigExecuteCondition();
+  public static PreconfigExecutionCondition alwaysExecute() {
+    return new AlwaysPreconfigExecuteCondition();
   }
 
-  static class AlwaysPreConfigExecuteCondition implements PreConfigExecutionCondition {
+  static class AlwaysPreconfigExecuteCondition implements PreconfigExecutionCondition {
 
     @Override
     public boolean canExecute() {
@@ -23,11 +23,11 @@ public class PreConfigExecutionConditions {
     }
   }
 
-  static class AndCompositePreConfigExecutionCondition implements PreConfigExecutionCondition {
-    private final PreConfigExecutionCondition condition1;
-    private final PreConfigExecutionCondition condition2;
+  static class AndCompositePreconfigExecutionCondition implements PreconfigExecutionCondition {
+    private final PreconfigExecutionCondition condition1;
+    private final PreconfigExecutionCondition condition2;
 
-    AndCompositePreConfigExecutionCondition(PreConfigExecutionCondition condition1, PreConfigExecutionCondition condition2) {
+    AndCompositePreconfigExecutionCondition(PreconfigExecutionCondition condition1, PreconfigExecutionCondition condition2) {
       this.condition1 = condition1;
       this.condition2 = condition2;
     }
@@ -38,11 +38,11 @@ public class PreConfigExecutionConditions {
     }
   }
 
-  static class OrCompositePreConfigExecutionCondition implements PreConfigExecutionCondition {
-    private final PreConfigExecutionCondition condition1;
-    private final PreConfigExecutionCondition condition2;
+  static class OrCompositePreconfigExecutionCondition implements PreconfigExecutionCondition {
+    private final PreconfigExecutionCondition condition1;
+    private final PreconfigExecutionCondition condition2;
 
-    OrCompositePreConfigExecutionCondition(PreConfigExecutionCondition condition1, PreConfigExecutionCondition condition2) {
+    OrCompositePreconfigExecutionCondition(PreconfigExecutionCondition condition1, PreconfigExecutionCondition condition2) {
       this.condition1 = condition1;
       this.condition2 = condition2;
     }

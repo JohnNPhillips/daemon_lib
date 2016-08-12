@@ -2,10 +2,10 @@ package com.liveramp.daemon_lib.executors.processes.execution_conditions.preconf
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class DefaultThreadedPreConfigExecutionCondition implements PreConfigExecutionCondition {
+public class DefaultThreadedPreconfigExecutionCondition implements PreconfigExecutionCondition {
   private final ThreadPoolExecutor threadPool;
 
-  public DefaultThreadedPreConfigExecutionCondition(ThreadPoolExecutor threadPool) {
+  public DefaultThreadedPreconfigExecutionCondition(ThreadPoolExecutor threadPool) {
     this.threadPool = threadPool;
   }
 
