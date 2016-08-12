@@ -4,8 +4,8 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedPreconfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +47,8 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
   }
 
   @Override
-  public ExecutionCondition getDefaultExecutionCondition() {
-    return new DefaultThreadedExecutionCondition(threadPool);
+  public PreconfigExecutionCondition getDefaultExecutionCondition() {
+    return new DefaultThreadedPreconfigExecutionCondition(threadPool);
   }
 
   @Override

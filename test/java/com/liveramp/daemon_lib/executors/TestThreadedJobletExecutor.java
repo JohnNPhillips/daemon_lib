@@ -5,7 +5,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedPreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import junit.framework.Assert;
 import org.junit.After;
@@ -94,7 +94,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
       }
     });
 
-    final DefaultThreadedExecutionCondition defaultThreadedExecutionCondition = new DefaultThreadedExecutionCondition(pool);
+    final DefaultThreadedPreconfigExecutionCondition defaultThreadedExecutionCondition = new DefaultThreadedPreconfigExecutionCondition(pool);
 
     Assert.assertTrue(defaultThreadedExecutionCondition.canExecute());
     jobletExecutor.execute(config);

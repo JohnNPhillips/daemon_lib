@@ -2,7 +2,7 @@ package com.liveramp.daemon_lib;
 
 import com.google.common.base.Optional;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +73,11 @@ public class Daemon<T extends JobletConfig> {
   private boolean running;
   private final JobletCallback<T> preExecutionCallback;
   private DaemonLock lock;
-  private final ExecutionCondition executionCondition;
+  private final PreconfigExecutionCondition preconfigExecutionCondition;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, ExecutionCondition executionCondition) {
+  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreconfigExecutionCondition preconfigExecutionCondition) {
     this.preExecutionCallback = preExecutionCallback;
-    this.executionCondition = executionCondition;
+    this.preconfigExecutionCondition = preconfigExecutionCondition;
     this.identifier = clean(identifier);
     this.configProducer = configProducer;
     this.executor = executor;
@@ -111,7 +111,7 @@ public class Daemon<T extends JobletConfig> {
   }
 
   protected boolean processNext() {
-    if (executionCondition.canExecute()) {
+    if (preconfigExecutionCondition.canExecute()) {
       T jobletConfig;
       try {
         lock.lock();
