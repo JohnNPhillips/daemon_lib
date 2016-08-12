@@ -8,8 +8,8 @@ import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.PreconfigExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.ExecutionConditions;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionConditions;
 import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   private final Daemon.Options options;
   private JobletCallback<T> onNewConfigCallback;
   private DaemonLock lock;
-  protected PreconfigExecutionCondition additionalPreconfigExecutionCondition = ExecutionConditions.alwaysExecute();
+  protected PreconfigExecutionCondition additionalPreconfigExecutionCondition = PreconfigExecutionConditions.alwaysExecute();
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
     this.identifier = identifier;
@@ -106,6 +106,6 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
 
     final JobletExecutor<T> executor = getExecutor();
 
-    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalPreconfigExecutionCondition));
+    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, PreconfigExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalPreconfigExecutionCondition));
   }
 }

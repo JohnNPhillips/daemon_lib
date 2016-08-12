@@ -2,7 +2,7 @@ package com.liveramp.daemon_lib;
 
 import com.google.common.base.Optional;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.PreconfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

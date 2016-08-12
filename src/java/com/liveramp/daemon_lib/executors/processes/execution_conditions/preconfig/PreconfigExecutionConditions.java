@@ -1,6 +1,6 @@
-package com.liveramp.daemon_lib.executors.processes.execution_conditions;
+package com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig;
 
-public class ExecutionConditions {
+public class PreconfigExecutionConditions {
   public static PreconfigExecutionCondition and(PreconfigExecutionCondition condition1, PreconfigExecutionCondition condition2) {
     return new AndCompositePreconfigExecutionCondition(condition1, condition2);
 

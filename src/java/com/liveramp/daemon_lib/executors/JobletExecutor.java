@@ -1,7 +1,7 @@
 package com.liveramp.daemon_lib.executors;
 
 import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.PreconfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 
 public interface JobletExecutor<T extends JobletConfig> {

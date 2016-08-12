@@ -5,7 +5,7 @@ import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.DefaultThreadedPreconfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.DefaultThreadedPreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import junit.framework.Assert;
 import org.junit.After;
