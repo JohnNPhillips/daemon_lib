@@ -37,6 +37,7 @@ public class TestDaemon extends DaemonLibTestCase {
   @Test
   public void executeConfig() throws DaemonException {
     Mockito.when(preconfigExecutionCondition.canExecute()).thenReturn(true);
+    Mockito.when(postConfigExecutionCondition.canExecute(config)).thenReturn(true);
     Mockito.when(configProducer.getNextConfig()).thenReturn(config);
 
     daemon.processNext();
