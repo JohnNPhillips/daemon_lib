@@ -2,6 +2,7 @@ package com.liveramp.daemon_lib;
 
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.junit.Before;
@@ -19,6 +20,7 @@ public class TestDaemon extends DaemonLibTestCase {
   private JobletConfig config;
   private JobletConfigProducer configProducer;
   private PreconfigExecutionCondition preconfigExecutionCondition;
+  private PostConfigExecutionCondition postConfigExecutionCondition;
 
   @Before
   @SuppressWarnings("unchecked")
@@ -27,6 +29,7 @@ public class TestDaemon extends DaemonLibTestCase {
     this.config = mock(JobletConfig.class);
     this.configProducer = mock(JobletConfigProducer.class);
     this.preconfigExecutionCondition = mock(PreconfigExecutionCondition.class);
+    this.postConfigExecutionCondition = mock(PostConfigExecutionCondition.class);
     this.daemon = new Daemon("identifier", executor, configProducer, new JobletCallback.None<>(),
         new NoOpDaemonLock(), mock(DaemonNotifier.class), new Daemon.Options(), preconfigExecutionCondition, postConfigExecutionCondition);
   }
