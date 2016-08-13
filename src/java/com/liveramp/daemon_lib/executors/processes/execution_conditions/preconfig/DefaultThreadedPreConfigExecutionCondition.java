@@ -13,9 +13,4 @@ public class DefaultThreadedPreConfigExecutionCondition implements PreConfigExec
   public boolean canExecute() {
     return threadPool.getActiveCount() < threadPool.getMaximumPoolSize();
   }
-
-  @Override
-  public boolean apply(Void input) {
-    return false;
-  }
 }
