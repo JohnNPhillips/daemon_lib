@@ -11,7 +11,7 @@ public class PostConfigExecutionConditions {
   static class AlwaysPostConfigExecutionCondition<T extends JobletConfig> implements PostConfigExecutionCondition<T> {
 
     @Override
-    public boolean canExecute(T config) {
+    public boolean apply(T input) {
       return true;
     }
   }

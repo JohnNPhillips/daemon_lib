@@ -125,7 +125,7 @@ public class Daemon<T extends JobletConfig> {
         return false;
       }
 
-      if (jobletConfig != null && postConfigExecutionCondition.canExecute(jobletConfig)) {
+      if (jobletConfig != null && postConfigExecutionCondition.apply(jobletConfig)) {
         LOG.info("Found joblet config: " + jobletConfig);
         try {
           preExecutionCallback.callback(jobletConfig);
