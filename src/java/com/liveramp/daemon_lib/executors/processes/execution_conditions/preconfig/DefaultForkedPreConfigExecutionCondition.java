@@ -3,11 +3,11 @@ package com.liveramp.daemon_lib.executors.processes.execution_conditions.preconf
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
 
-public class DefaultForkedPreconfigExecutionCondition implements PreconfigExecutionCondition {
+public class DefaultForkedPreConfigExecutionCondition implements PreConfigExecutionCondition {
   private final ProcessController processController;
   private final int maxProcesses;
 
-  public DefaultForkedPreconfigExecutionCondition(ProcessController processController, int maxProcesses) {
+  public DefaultForkedPreConfigExecutionCondition(ProcessController processController, int maxProcesses) {
     this.processController = processController;
     this.maxProcesses = maxProcesses;
   }
