@@ -96,7 +96,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
     return self();
   }
 
-  public K setPostConfigExecutionCondition(PostConfigExecutionCondition<T> preconfigExecutionCondition) {
+  public K setPostConfigExecutionCondition(PostConfigExecutionCondition<T> postConfigExecutionCondition) {
     this.postConfigExecutionCondition = postConfigExecutionCondition;
     return self();
   }
