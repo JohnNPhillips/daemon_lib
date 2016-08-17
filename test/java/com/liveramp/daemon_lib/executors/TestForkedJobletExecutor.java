@@ -11,7 +11,7 @@ import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.processes.ProcessController;
 import com.liveramp.daemon_lib.executors.processes.ProcessControllerException;
 import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.DefaultForkedPreConfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.DefaultForkedExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
@@ -64,7 +64,7 @@ public class TestForkedJobletExecutor extends DaemonLibTestCase {
   @Test
   public void canExecuteAnother() throws ProcessControllerException {
     Mockito.when(processController.getProcesses()).thenReturn(Lists.<ProcessDefinition<JobletConfigMetadata>>newArrayList());
-    DefaultForkedPreConfigExecutionCondition executionCondition = new DefaultForkedPreConfigExecutionCondition(processController, MAX_PROCESSES);
+    DefaultForkedExecutionCondition executionCondition = new DefaultForkedExecutionCondition(processController, MAX_PROCESSES);
     Assert.assertEquals(true, executionCondition.canExecute());
 
     Mockito.when(processController.getProcesses()).thenReturn(Lists.newArrayList(DUMMY_PROCESS));
