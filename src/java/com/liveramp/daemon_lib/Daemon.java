@@ -2,8 +2,8 @@ package com.liveramp.daemon_lib;
 
 import com.google.common.base.Optional;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreConfigExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,13 +74,13 @@ public class Daemon<T extends JobletConfig> {
   private boolean running;
   private final JobletCallback<T> preExecutionCallback;
   private DaemonLock lock;
-  private final PreConfigExecutionCondition preConfigExecutionCondition;
-  private final PostConfigExecutionCondition<T> postConfigExecutionCondition;
+  private final ExecutionCondition executionCondition;
+  private final ConfigBasedExecutionCondition<T> configBasedExecutionCondition;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, PreConfigExecutionCondition preConfigExecutionCondition, PostConfigExecutionCondition<T> postConfigExecutionCondition) {
+  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, ExecutionCondition executionCondition, ConfigBasedExecutionCondition<T> configBasedExecutionCondition) {
     this.preExecutionCallback = preExecutionCallback;
-    this.preConfigExecutionCondition = preConfigExecutionCondition;
-    this.postConfigExecutionCondition = postConfigExecutionCondition;
+    this.executionCondition = executionCondition;
+    this.configBasedExecutionCondition = configBasedExecutionCondition;
     this.identifier = clean(identifier);
     this.configProducer = configProducer;
     this.executor = executor;
@@ -114,7 +114,7 @@ public class Daemon<T extends JobletConfig> {
   }
 
   protected boolean processNext() {
-    if (preConfigExecutionCondition.canExecute()) {
+    if (executionCondition.canExecute()) {
       T jobletConfig;
       try {
         lock.lock();
@@ -125,7 +125,7 @@ public class Daemon<T extends JobletConfig> {
         return false;
       }
 
-      if (jobletConfig != null && postConfigExecutionCondition.apply(jobletConfig)) {
+      if (jobletConfig != null && configBasedExecutionCondition.apply(jobletConfig)) {
         LOG.info("Found joblet config: " + jobletConfig);
         try {
           preExecutionCallback.callback(jobletConfig);

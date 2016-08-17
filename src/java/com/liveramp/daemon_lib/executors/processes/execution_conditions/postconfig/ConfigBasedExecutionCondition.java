@@ -3,5 +3,5 @@ package com.liveramp.daemon_lib.executors.processes.execution_conditions.postcon
 import com.google.common.base.Predicate;
 import com.liveramp.daemon_lib.JobletConfig;
 
-public interface PostConfigExecutionCondition<T extends JobletConfig> extends Predicate<T> {
+public interface ConfigBasedExecutionCondition<T extends JobletConfig> extends Predicate<T> {
 }

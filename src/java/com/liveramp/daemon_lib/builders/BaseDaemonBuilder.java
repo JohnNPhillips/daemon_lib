@@ -8,10 +8,10 @@ import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.PostConfigExecutionConditions;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreConfigExecutionCondition;
-import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.PreconfigExecutionConditions;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionConditions;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionCondition;
+import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionConditions;
 import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +24,8 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   private final Daemon.Options options;
   private JobletCallback<T> onNewConfigCallback;
   private DaemonLock lock;
-  protected PreConfigExecutionCondition additionalPreConfigExecutionCondition = PreconfigExecutionConditions.alwaysExecute();
-  protected PostConfigExecutionCondition<T> postConfigExecutionCondition = PostConfigExecutionConditions.alwaysExecute();
+  protected ExecutionCondition additionalExecutionCondition = ExecutionConditions.alwaysExecute();
+  protected ConfigBasedExecutionCondition<T> configBasedExecutionCondition = ConfigBasedExecutionConditions.alwaysExecute();
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
     this.identifier = identifier;
@@ -91,13 +91,13 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
     return self();
   }
 
-  public K setAdditionalPreConfigExecutionCondition(PreConfigExecutionCondition preConfigExecutionCondition) {
-    this.additionalPreConfigExecutionCondition = preConfigExecutionCondition;
+  public K setAdditionalExecutionCondition(ExecutionCondition executionCondition) {
+    this.additionalExecutionCondition = executionCondition;
     return self();
   }
 
-  public K setPostConfigExecutionCondition(PostConfigExecutionCondition<T> postConfigExecutionCondition) {
-    this.postConfigExecutionCondition = postConfigExecutionCondition;
+  public K setConfigBasedExecutionCondition(ConfigBasedExecutionCondition<T> configBasedExecutionCondition) {
+    this.configBasedExecutionCondition = configBasedExecutionCondition;
     return self();
   }
 
@@ -114,6 +114,6 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
 
     final JobletExecutor<T> executor = getExecutor();
 
-    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, PreconfigExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalPreConfigExecutionCondition), postConfigExecutionCondition);
+    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalExecutionCondition), configBasedExecutionCondition);
   }
 }
