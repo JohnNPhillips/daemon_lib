@@ -1,6 +1,12 @@
 package com.liveramp.daemon_lib.builders;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
+
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
@@ -9,11 +15,6 @@ import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunners;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ForkingDaemonBuilder<T>> {
 
@@ -66,6 +67,7 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
     if (jobletRunner == null) {
       jobletRunner = ProcessJobletRunners.production();
     }
+
     final String tmpPath = new File(workingDir, identifier).getPath();
     return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner);
   }

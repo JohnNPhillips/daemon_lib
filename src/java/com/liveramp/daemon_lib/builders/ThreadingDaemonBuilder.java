@@ -1,14 +1,15 @@
 package com.liveramp.daemon_lib.builders;
 
+import java.io.IOException;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuilder<T, ThreadingDaemonBuilder<T>> {
 

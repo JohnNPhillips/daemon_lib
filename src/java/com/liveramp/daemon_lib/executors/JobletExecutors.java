@@ -1,7 +1,16 @@
 package com.liveramp.daemon_lib.executors;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.commons.io.FileUtils;
+
 import com.liveramp.daemon_lib.DaemonNotifier;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -15,14 +24,6 @@ import com.liveramp.daemon_lib.tracking.JobletStatusManager;
 import com.liveramp.daemon_lib.utils.JobletConfigMetadata;
 import com.liveramp.daemon_lib.utils.JobletConfigStorage;
 import com.liveramp.daemon_lib.utils.JobletProcessHandler;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class JobletExecutors {
 
@@ -42,10 +43,9 @@ public class JobletExecutors {
       File pidDir = new File(tmpPath, "pids");
       File configStoreDir = new File(tmpPath, "config_store");
       FileUtils.forceMkdir(pidDir);
-      
+
       JobletConfigStorage<T> configStore = JobletConfigStorage.production(configStoreDir.getPath());
       JobletStatusManager jobletStatusManager = new DefaultJobletStatusManager(tmpPath);
-
       LocalProcessController<JobletConfigMetadata> processController = new LocalProcessController<>(
           notifier,
           new FsHelper(pidDir.getPath()),
@@ -72,7 +72,7 @@ public class JobletExecutors {
       Preconditions.checkNotNull(jobletFactory);
       Preconditions.checkArgument(maxActiveJoblets > 0);
 
-      ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(
+      ThreadPoolExecutor threadPool = (ThreadPoolExecutor)Executors.newFixedThreadPool(
           maxActiveJoblets,
           new ThreadFactoryBuilder().setNameFormat("joblet-executor-%d").build()
       );
