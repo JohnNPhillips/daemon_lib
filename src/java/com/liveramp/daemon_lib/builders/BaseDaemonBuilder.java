@@ -91,7 +91,7 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
     return self();
   }
 
-  public K setAdditionalPreExecutionCondition(ExecutionCondition executionCondition) {
+  public K setAdditionalPreConfigExecutionCondition(ExecutionCondition executionCondition) {
     this.additionalExecutionCondition = executionCondition;
     return self();
   }
