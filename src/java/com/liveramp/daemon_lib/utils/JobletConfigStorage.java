@@ -3,20 +3,26 @@ package com.liveramp.daemon_lib.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.liveramp.daemon_lib.JobletConfig;
+import com.liveramp.daemon_lib.utils.serializers.ConfigSerializer;
+import com.liveramp.daemon_lib.utils.serializers.GsonConfigSerializer;
 
 public class JobletConfigStorage<T extends JobletConfig> {
   private final String basePath;
+  private final ConfigSerializer<T> serializer;
 
   public JobletConfigStorage(String basePath) {
+    this(basePath, new GsonConfigSerializer<T>(){});
+  }
+
+  public JobletConfigStorage(String basePath, ConfigSerializer serializer) {
     this.basePath = basePath;
+    this.serializer = serializer;
   }
 
   // Stores config and returns an identifier that can be used to retrieve it
@@ -25,9 +31,8 @@ public class JobletConfigStorage<T extends JobletConfig> {
     try {
       File path = getPath(identifier);
       FileUtils.forceMkdir(path.getParentFile());
-      FileOutputStream fos = new FileOutputStream(path);
-      SerializationUtils.serialize(config, fos);
-      fos.close();
+
+      FileUtils.writeByteArrayToFile(path, serializer.serialize(config));
     } catch (FileNotFoundException e) {
       throw new IOException(e);
     }
@@ -37,11 +42,9 @@ public class JobletConfigStorage<T extends JobletConfig> {
 
   public T loadConfig(String identifier) throws IOException, ClassNotFoundException {
     try {
-      ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getPath(identifier)));
-      T config = (T)ois.readObject();
-      ois.close();
+      byte[] data = IOUtils.toByteArray(new FileInputStream(getPath(identifier)));
 
-      return config;
+      return serializer.deserialize(data);
     } catch (FileNotFoundException e) {
       throw new IOException(e);
     }
