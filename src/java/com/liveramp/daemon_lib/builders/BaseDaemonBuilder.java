@@ -7,38 +7,48 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.built_in.NoOpDaemonLock;
+import com.liveramp.daemon_lib.configuration.ConfigHelper;
+import com.liveramp.daemon_lib.configuration.ConfigurableFactory;
+import com.liveramp.daemon_lib.configuration.DaemonOptionsFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionConditions;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionConditions;
 import com.liveramp.daemon_lib.utils.NoOpDaemonNotifier;
+
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
 public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> {
   protected final String identifier;
-  private final JobletConfigProducer<T> configProducer;
-  protected DaemonNotifier notifier;
-  private final Daemon.Options options;
+  private final ConfigurableFactory<JobletConfigProducer<T>> configProducer;
+  protected ConfigurableFactory<DaemonNotifier> notifier;
+  private final DaemonOptionsFactory options;
   private JobletCallback<T> onNewConfigCallback;
-  private DaemonLock lock;
-  protected ExecutionCondition additionalExecutionCondition = ExecutionConditions.alwaysExecute();
-  protected ConfigBasedExecutionCondition<T> postConfigExecutionCondition = ConfigBasedExecutionConditions.alwaysExecute();
+  private ConfigurableFactory<DaemonLock> lock;
+  protected ConfigurableFactory<ExecutionCondition> additionalExecutionCondition = ConfigHelper.factoryFor(ExecutionConditions.alwaysExecute());
+  protected ConfigurableFactory<ConfigBasedExecutionCondition<T>> postConfigExecutionCondition = ConfigHelper.factoryFor(ConfigBasedExecutionConditions.<T>alwaysExecute());
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
+    this(identifier, ConfigHelper.<JobletConfigProducer<T>, JobletConfigProducer<T>>factoryFor(configProducer));
+  }
+
+  public BaseDaemonBuilder(String identifier, ConfigurableFactory<JobletConfigProducer<T>> configProducer) {
     this.identifier = identifier;
     this.configProducer = configProducer;
-    this.onNewConfigCallback = new JobletCallback.None<>();
-    this.lock = new NoOpDaemonLock();
+    this.onNewConfigCallback = new JobletCallback.None<T>();
+    this.lock = ConfigHelper.factoryFor(new NoOpDaemonLock());
 
-    this.options = new Daemon.Options();
-    this.notifier = new NoOpDaemonNotifier();
+    this.options = new DaemonOptionsFactory(new Daemon.Options());
+    this.notifier = ConfigHelper.factoryFor(new NoOpDaemonNotifier());
   }
 
   public K setNotifier(DaemonNotifier notifier) {
-    this.notifier = notifier;
+    this.notifier = ConfigHelper.factoryFor(notifier);
     return self();
   }
 
@@ -87,31 +97,71 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
    * instance produces a configuration at a time.
    */
   public K setDaemonConfigProductionLock(DaemonLock lock) {
-    this.lock = lock;
+    this.lock = ConfigHelper.factoryFor(lock);
     return self();
   }
 
   public K setAdditionalPreConfigExecutionCondition(ExecutionCondition executionCondition) {
-    this.additionalExecutionCondition = executionCondition;
+    this.additionalExecutionCondition = ConfigHelper.factoryFor(executionCondition);
     return self();
   }
 
   public K setPostConfigExecutionCondition(ConfigBasedExecutionCondition<T> configBasedExecutionCondition) {
-    this.postConfigExecutionCondition = configBasedExecutionCondition;
+    this.postConfigExecutionCondition = ConfigHelper.factoryFor(configBasedExecutionCondition);
+    return self();
+  }
+
+  public K setNotifier(ConfigurableFactory<DaemonNotifier> notifier) {
+    this.notifier = notifier;
+    return self();
+  }
+
+  public K setLock(ConfigurableFactory<DaemonLock> lock) {
+    this.lock = lock;
+    return self();
+  }
+
+  public K setAdditionalExecutionCondition(ConfigurableFactory<ExecutionCondition> additionalExecutionCondition) {
+    this.additionalExecutionCondition = additionalExecutionCondition;
+    return self();
+  }
+
+  public K setPostConfigExecutionCondition(ConfigurableFactory<ConfigBasedExecutionCondition<T>> postConfigExecutionCondition) {
+    this.postConfigExecutionCondition = postConfigExecutionCondition;
     return self();
   }
 
   @SuppressWarnings("unchecked")
   private K self() {
-    return (K) this;
+    return (K)this;
   }
 
   @NotNull
-  protected abstract JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException;
+  protected abstract JobletExecutor<T> getExecutor(JSONObject config) throws IllegalAccessException, IOException, InstantiationException, JSONException;
 
   @NotNull
   public Daemon<T> build() throws IllegalAccessException, IOException, InstantiationException {
-    final JobletExecutor<T> executor = getExecutor();
-    return new Daemon<>(identifier, executor, configProducer, onNewConfigCallback, lock, notifier, options, ExecutionConditions.and(executor.getDefaultExecutionCondition(), additionalExecutionCondition), postConfigExecutionCondition);
+    try {
+      return build(new JSONObject());
+    } catch (JSONException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @NotNull
+  public Daemon<T> build(JSONObject configuration) throws IllegalAccessException, IOException, InstantiationException, JSONException {
+    final JobletExecutor<T> executor = getExecutor(configuration);
+    return new Daemon<>(
+        identifier,
+        executor,
+        configProducer.build(configuration),
+        onNewConfigCallback,
+        lock.build(configuration),
+        notifier.build(configuration),
+        options.build(configuration),
+        ExecutionConditions.and(
+            executor.getDefaultExecutionCondition(),
+            additionalExecutionCondition.build(configuration)),
+        postConfigExecutionCondition.build(configuration));
   }
 }

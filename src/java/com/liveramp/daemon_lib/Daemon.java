@@ -1,14 +1,17 @@
 package com.liveramp.daemon_lib;
 
 import com.google.common.base.Optional;
+
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.postconfig.ConfigBasedExecutionCondition;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.ExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+
 import com.liveramp.daemon_lib.utils.HostUtil;
 
 public class Daemon<T extends JobletConfig> {
@@ -24,6 +27,16 @@ public class Daemon<T extends JobletConfig> {
     private int executionSlotWaitSeconds = DEFAULT_EXECUTION_SLOT_WAIT_SECONDS;
     private int nextConfigWaitSeconds = DEFAULT_NEXT_CONFIG_WAIT_SECONDS;
     private int failureWaitSeconds = DEFAULT_FAILURE_WAIT_SECONDS;
+
+    public Options() {
+    }
+
+    public Options(Options other) {
+      this.configWaitSeconds = other.configWaitSeconds;
+      this.executionSlotWaitSeconds = other.executionSlotWaitSeconds;
+      this.nextConfigWaitSeconds = other.nextConfigWaitSeconds;
+      this.failureWaitSeconds = other.failureWaitSeconds;
+    }
 
     /**
      * @param sleepingSeconds How long the daemon should wait before retrying when there is no config available.

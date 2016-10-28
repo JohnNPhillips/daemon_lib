@@ -6,11 +6,16 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletConfigProducer;
 import com.liveramp.daemon_lib.JobletFactory;
+import com.liveramp.daemon_lib.configuration.CommonConfigKeys;
+import com.liveramp.daemon_lib.configuration.ConfigHelper;
+import com.liveramp.daemon_lib.configuration.ConfigurableFactory;
 import com.liveramp.daemon_lib.executors.JobletExecutor;
 import com.liveramp.daemon_lib.executors.JobletExecutors;
 import com.liveramp.daemon_lib.executors.forking.ProcessJobletRunner;
@@ -30,6 +35,11 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
   private static final Map<String, String> DEFAULT_ENV_VARS = Maps.newHashMap();
 
   public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> configProducer, ProcessJobletRunner jobletRunner) {
+    this(workingDir, identifier, jobletFactoryClass,
+        ConfigHelper.<JobletConfigProducer<T>, JobletConfigProducer<T>>factoryFor(configProducer), jobletRunner);
+  }
+
+  public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, ConfigurableFactory<JobletConfigProducer<T>> configProducer, ProcessJobletRunner jobletRunner) {
     super(identifier, configProducer);
     this.workingDir = workingDir;
     this.jobletFactoryClass = jobletFactoryClass;
@@ -63,12 +73,22 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
 
   @NotNull
   @Override
-  protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
+  protected JobletExecutor<T> getExecutor(JSONObject config) throws IllegalAccessException, IOException, InstantiationException, JSONException {
     if (jobletRunner == null) {
       jobletRunner = ProcessJobletRunners.production();
     }
 
+    int realMaxProcess =
+        ConfigHelper.configWithDefault(config, CommonConfigKeys.MAX_SIMULTANEOUS_JOBLETS, maxProcesses);
+
     final String tmpPath = new File(workingDir, identifier).getPath();
-    return JobletExecutors.Forked.get(notifier, tmpPath, maxProcesses, jobletFactoryClass, envVariables, successCallback, failureCallback, jobletRunner);
+    return JobletExecutors.Forked.get(notifier.build(config),
+        tmpPath,
+        realMaxProcess,
+        jobletFactoryClass,
+        envVariables,
+        successCallback,
+        failureCallback,
+        jobletRunner);
   }
 }

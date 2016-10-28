@@ -3,6 +3,7 @@ package com.liveramp.daemon_lib.builders;
 import java.io.IOException;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
@@ -39,7 +40,7 @@ public class BlockingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBui
 
   @NotNull
   @Override
-  protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
+  protected JobletExecutor<T> getExecutor(JSONObject config) throws IllegalAccessException, IOException, InstantiationException {
     return JobletExecutors.Blocking.get(jobletFactory, successCallback, failureCallback);
   }
 }
