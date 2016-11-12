@@ -91,7 +91,8 @@ public class Daemon<T extends JobletConfig> {
   private final ExecutionCondition executionCondition;
   private final ConfigBasedExecutionCondition<T> configBasedExecutionCondition;
 
-  public Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, ExecutionCondition executionCondition, ConfigBasedExecutionCondition<T> configBasedExecutionCondition) {
+  public
+  Daemon(String identifier, JobletExecutor<T> executor, JobletConfigProducer<T> configProducer, JobletCallback<T> preExecutionCallback, DaemonLock lock, DaemonNotifier notifier, Options options, ExecutionCondition executionCondition, ConfigBasedExecutionCondition<T> configBasedExecutionCondition) {
     this.preExecutionCallback = preExecutionCallback;
     this.executionCondition = executionCondition;
     this.configBasedExecutionCondition = configBasedExecutionCondition;
@@ -109,7 +110,7 @@ public class Daemon<T extends JobletConfig> {
     return identifier.replaceAll("\\s", "-");
   }
 
-  public final void start() {
+  public void start() {
     LOG.info("Starting daemon {}", getDaemonSignature());
     running = true;
 
@@ -170,7 +171,7 @@ public class Daemon<T extends JobletConfig> {
     return true;
   }
 
-  public final void stop() {
+  public void stop() {
     running = false;
     executor.shutdown();
   }

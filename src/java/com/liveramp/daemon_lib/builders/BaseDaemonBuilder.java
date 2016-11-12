@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> {
+public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDaemonBuilder<T, K>> implements DaemonBuilder<T> {
   protected final String identifier;
   private final ConfigurableFactory<JobletConfigProducer<T>> configProducer;
   protected ConfigurableFactory<DaemonNotifier> notifier;

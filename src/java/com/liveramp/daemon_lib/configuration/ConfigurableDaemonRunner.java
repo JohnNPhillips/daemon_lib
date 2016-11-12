@@ -13,22 +13,29 @@ import org.slf4j.LoggerFactory;
 
 import com.liveramp.daemon_lib.Daemon;
 import com.liveramp.daemon_lib.JobletConfig;
-import com.liveramp.daemon_lib.builders.BaseDaemonBuilder;
+import com.liveramp.daemon_lib.builders.DaemonBuilder;
 
-public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaemonBuilder<T, B>> {
+public class ConfigurableDaemonRunner<T extends JobletConfig, B extends DaemonBuilder<T>> {
 
+  public static final int DEFAULT_SLEEP_MILLIS = 10000;
   private B builder;
   private ConfigurationProvider provider;
   private boolean running = true;
   private Daemon<T> daemon = null;
   private Thread daemonThread;
   private JSONObject lastConfig = null;
+  private long sleepTimeMillis;
 
   private static Logger LOG = LoggerFactory.getLogger(ConfigurableDaemonRunner.class);
 
   public ConfigurableDaemonRunner(B builder, ConfigurationProvider provider) {
+    this(builder, provider, DEFAULT_SLEEP_MILLIS);
+  }
+
+  public ConfigurableDaemonRunner(B builder, ConfigurationProvider provider, long sleepTimeMillis) {
     this.builder = builder;
     this.provider = provider;
+    this.sleepTimeMillis = sleepTimeMillis;
   }
 
   public void run() {
@@ -38,7 +45,7 @@ public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaem
       try {
         if (shouldLaunchDaemon(config)) {
           LOG.info("Loading new configuration: " + config.toString());
-          waitOnRunningDaemon();
+          stopAndWaitOnRunningDaemon();
           buildAndStartNewDaemon(config);
           lastConfig = config;
         }
@@ -48,7 +55,7 @@ public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaem
 
       sleep();
     }
-    waitOnRunningDaemon();
+    stopAndWaitOnRunningDaemon();
   }
 
   public void stop() {
@@ -57,7 +64,7 @@ public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaem
 
   private void sleep() {
     try {
-      TimeUnit.SECONDS.sleep(10);
+      TimeUnit.MILLISECONDS.sleep(sleepTimeMillis);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -79,7 +86,7 @@ public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaem
     daemonThread.start();
   }
 
-  private synchronized void waitOnRunningDaemon() {
+  private synchronized void stopAndWaitOnRunningDaemon() {
     try {
       if (daemonThread != null) {
         LOG.info("Stopping current daemon");
@@ -119,7 +126,7 @@ public class ConfigurableDaemonRunner<T extends JobletConfig, B extends BaseDaem
     public void run() {
       LOG.info("Shutdown initiated. Stopping daemon");
       runner.stop();
-      runner.waitOnRunningDaemon();
+      runner.stopAndWaitOnRunningDaemon();
     }
   }
 }

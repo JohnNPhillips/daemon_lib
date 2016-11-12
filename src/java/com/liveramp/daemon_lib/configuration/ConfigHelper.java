@@ -5,7 +5,13 @@ import org.json.JSONObject;
 
 public class ConfigHelper {
 
+  //the two following methods, for some reason, interact
+  // differently with java's type inference
   public static <T, F extends T> ConfigurableFactory<T> factoryFor(F instance) {
+    return new ConfigurableFactory.ReturnInstance<>(instance);
+  }
+
+  public static <T> ConfigurableFactory<T> factoryOf(T instance) {
     return new ConfigurableFactory.ReturnInstance<>(instance);
   }
 
