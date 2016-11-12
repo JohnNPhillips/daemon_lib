@@ -36,7 +36,7 @@ public class ForkingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBuil
 
   public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, JobletConfigProducer<T> configProducer, ProcessJobletRunner jobletRunner) {
     this(workingDir, identifier, jobletFactoryClass,
-        ConfigHelper.<JobletConfigProducer<T>, JobletConfigProducer<T>>factoryFor(configProducer), jobletRunner);
+        ConfigHelper.factoryOf(configProducer), jobletRunner);
   }
 
   public ForkingDaemonBuilder(String workingDir, String identifier, Class<? extends JobletFactory<T>> jobletFactoryClass, ConfigurableFactory<JobletConfigProducer<T>> configProducer, ProcessJobletRunner jobletRunner) {

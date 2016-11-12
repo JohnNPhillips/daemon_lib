@@ -30,11 +30,11 @@ public abstract class BaseDaemonBuilder<T extends JobletConfig, K extends BaseDa
   private final DaemonOptionsFactory options;
   private JobletCallback<T> onNewConfigCallback;
   private ConfigurableFactory<DaemonLock> lock;
-  protected ConfigurableFactory<ExecutionCondition> additionalExecutionCondition = ConfigHelper.factoryFor(ExecutionConditions.alwaysExecute());
-  protected ConfigurableFactory<ConfigBasedExecutionCondition<T>> postConfigExecutionCondition = ConfigHelper.factoryFor(ConfigBasedExecutionConditions.<T>alwaysExecute());
+  protected ConfigurableFactory<ExecutionCondition> additionalExecutionCondition = ConfigHelper.factoryOf(ExecutionConditions.alwaysExecute());
+  protected ConfigurableFactory<ConfigBasedExecutionCondition<T>> postConfigExecutionCondition = ConfigHelper.factoryOf(ConfigBasedExecutionConditions.<T>alwaysExecute());
 
   public BaseDaemonBuilder(String identifier, JobletConfigProducer<T> configProducer) {
-    this(identifier, ConfigHelper.<JobletConfigProducer<T>, JobletConfigProducer<T>>factoryFor(configProducer));
+    this(identifier, ConfigHelper.factoryOf(configProducer));
   }
 
   public BaseDaemonBuilder(String identifier, ConfigurableFactory<JobletConfigProducer<T>> configProducer) {
