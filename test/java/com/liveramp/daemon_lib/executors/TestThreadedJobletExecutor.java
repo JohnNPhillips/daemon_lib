@@ -11,13 +11,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.liveramp.daemon_lib.DaemonLibTestCase;
+import com.liveramp.daemon_lib.ErrorCallback;
 import com.liveramp.daemon_lib.Joblet;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.DefaultThreadedExecutionCondition;
 import com.liveramp.daemon_lib.utils.DaemonException;
+import com.liveramp.daemon_lib.utils.JobletException;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -31,6 +36,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
   private ThreadedJobletExecutor<IDConfig> jobletExecutor;
   private JobletCallback<IDConfig> successCallback;
   private JobletCallback<IDConfig> failureCallback;
+  private ErrorCallback<IDConfig> errorCallback;
 
   @Before
   public void setUp() throws Exception {
@@ -38,7 +44,8 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     factory = mock(JobletFactory.class, RETURNS_DEEP_STUBS);
     successCallback = mock(JobletCallback.class);
     failureCallback = mock(JobletCallback.class);
-    jobletExecutor = new ThreadedJobletExecutor<>(pool, factory, successCallback, failureCallback);
+    errorCallback = mock(ErrorCallback.class);
+    jobletExecutor = new ThreadedJobletExecutor<>(pool, factory, successCallback, failureCallback, errorCallback);
   }
 
   @After
@@ -57,12 +64,12 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
 
     verify(factory.create(config), times(1)).run();
     verify(successCallback, times(1)).callback(config);
-
     verify(failureCallback, times(0)).callback(config);
+    verify(errorCallback, times(0)).callback(any(IDConfig.class), anyLong(), anyString());
   }
 
   @Test
-  public void testExecuteJobletExceptionCallAfter() throws Exception {
+  public void testExecuteDaemonExceptionCallAfter() throws Exception {
     IDConfig config = new IDConfig(1);
 
     when(factory.create(config)).thenReturn(new Joblet() {
@@ -77,9 +84,31 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     pool.shutdown();
     pool.awaitTermination(10, TimeUnit.SECONDS);
 
-    verify(failureCallback, times(1)).callback(config);
 
     verify(successCallback, times(0)).callback(config);
+    verify(failureCallback, times(1)).callback(config);
+    verify(errorCallback, times(0)).callback(any(IDConfig.class), anyLong(), anyString());
+  }
+
+  @Test
+  public void testExecuteJobletExceptionCallAfter() throws Exception {
+    IDConfig config = new IDConfig(1);
+
+    when(factory.create(config)).thenReturn(new Joblet() {
+      @Override
+      public void run() throws DaemonException, JobletException {
+        throw new JobletException(1, "");
+      }
+    });
+
+    jobletExecutor.execute(config);
+
+    pool.shutdown();
+    pool.awaitTermination(10, TimeUnit.SECONDS);
+
+    verify(successCallback, times(0)).callback(config);
+    verify(errorCallback, times(1)).callback(any(IDConfig.class), anyLong(), anyString());
+    verify(failureCallback, times(0)).callback(config);
   }
 
   @Test
