@@ -2,28 +2,33 @@ package com.liveramp.daemon_lib.utils;
 
 import java.io.IOException;
 
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.liveramp.daemon_lib.ErrorCallback;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.executors.processes.ProcessDefinition;
 import com.liveramp.daemon_lib.executors.processes.ProcessMetadata;
 import com.liveramp.daemon_lib.executors.processes.local.ProcessHandler;
+import com.liveramp.daemon_lib.tracking.JobletErrorInfo;
 import com.liveramp.daemon_lib.tracking.JobletStatus;
 import com.liveramp.daemon_lib.tracking.JobletStatusManager;
 
 public class JobletProcessHandler<T extends JobletConfig, Pid, M extends ProcessMetadata> implements ProcessHandler<M, Pid> {
   private final JobletCallback<? super T> successCallback;
   private final JobletCallback<? super T> failureCallback;
+  private final ErrorCallback<? super T> errorCallback;
   private final JobletConfigStorage<T> configStorage;
   private final JobletStatusManager jobletStatusManager;
 
   private static Logger LOG = LoggerFactory.getLogger(JobletProcessHandler.class);
 
-  public JobletProcessHandler(JobletCallback<? super T> successCallback, JobletCallback<? super T> failureCallback, JobletConfigStorage<T> configStorage, JobletStatusManager jobletStatusManager) {
+  public JobletProcessHandler(JobletCallback<? super T> successCallback, JobletCallback<? super T> failureCallback, ErrorCallback<? super T> errorCallback, JobletConfigStorage<T> configStorage, JobletStatusManager jobletStatusManager) {
     this.successCallback = successCallback;
     this.failureCallback = failureCallback;
+    this.errorCallback = errorCallback;
     this.configStorage = configStorage;
     this.jobletStatusManager = jobletStatusManager;
   }
@@ -48,12 +53,21 @@ public class JobletProcessHandler<T extends JobletConfig, Pid, M extends Process
             LOG.info("Process succeeded - PID: " + watchedProcess.getPid());
             successCallback.callback(jobletConfig);
             break;
+          case ERROR:
+            LOG.info("Process returned an error - PID: " + watchedProcess.getPid());
+            Optional<JobletErrorInfo> errorInfo = jobletStatusManager.getErrorInfo(identifier);
+            if (errorInfo.isPresent()) {
+              errorCallback.callback(jobletConfig, errorInfo.get());
+            } else {
+              LOG.info("The process returned an error, but no error info was found. Executing the failure callback for PID: " + watchedProcess.getPid());
+              failureCallback.callback(jobletConfig);
+            }
+            break;
           default:
             LOG.info("Process failed - PID: " + watchedProcess.getPid());
             failureCallback.callback(jobletConfig);
             break;
         }
-
         jobletStatusManager.remove(identifier);
         configStorage.deleteConfig(identifier);
       } catch (Exception e) {

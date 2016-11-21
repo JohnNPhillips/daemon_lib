@@ -48,7 +48,7 @@ public class ThreadedJobletExecutor<T extends JobletConfig> implements JobletExe
           successCallback.callback(config);
         } catch (JobletException je) {
           LOG.error("Caught joblet exception with config " + config, je);
-          errorCallback.callback(config, je.getVal(), je.getMessage());
+          errorCallback.callback(config, je.getErrorInfo());
         } catch (Exception e) {
           LOG.error("Failed to call for config " + config, e);
           failureCallback.callback(config);

@@ -1,21 +1,25 @@
 package com.liveramp.daemon_lib.utils;
 
-public class JobletException extends Exception {
+import com.liveramp.daemon_lib.tracking.JobletErrorInfo;
 
-  private final long val;
+public class JobletException extends Exception {
+  private JobletErrorInfo errorInfo;
 
   public JobletException(long val, String message) {
-    super(message);
-    this.val = val;
+    this.errorInfo = new JobletErrorInfo(val, message);
   }
-
 
   public JobletException(long val, String message, Throwable cause) {
-    super(message, cause);
-    this.val = val;
+    super(cause);
+    this.errorInfo = new JobletErrorInfo(val, message);
   }
 
-  public long getVal() {
-    return val;
+  public JobletException(JobletErrorInfo errorInfo, Throwable cause) {
+    super(cause);
+    this.errorInfo = errorInfo;
+  }
+
+  public JobletErrorInfo getErrorInfo() {
+    return errorInfo;
   }
 }

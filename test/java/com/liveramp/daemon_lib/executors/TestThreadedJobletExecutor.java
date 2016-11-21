@@ -17,12 +17,11 @@ import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletFactory;
 import com.liveramp.daemon_lib.built_in.IDConfig;
 import com.liveramp.daemon_lib.executors.processes.execution_conditions.preconfig.DefaultThreadedExecutionCondition;
+import com.liveramp.daemon_lib.tracking.JobletErrorInfo;
 import com.liveramp.daemon_lib.utils.DaemonException;
 import com.liveramp.daemon_lib.utils.JobletException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -65,7 +64,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     verify(factory.create(config), times(1)).run();
     verify(successCallback, times(1)).callback(config);
     verify(failureCallback, times(0)).callback(config);
-    verify(errorCallback, times(0)).callback(any(IDConfig.class), anyLong(), anyString());
+    verify(errorCallback, times(0)).callback(any(IDConfig.class), any(JobletErrorInfo.class));
   }
 
   @Test
@@ -87,7 +86,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
 
     verify(successCallback, times(0)).callback(config);
     verify(failureCallback, times(1)).callback(config);
-    verify(errorCallback, times(0)).callback(any(IDConfig.class), anyLong(), anyString());
+    verify(errorCallback, times(0)).callback(any(IDConfig.class), any(JobletErrorInfo.class));
   }
 
   @Test
@@ -107,7 +106,7 @@ public class TestThreadedJobletExecutor extends DaemonLibTestCase {
     pool.awaitTermination(10, TimeUnit.SECONDS);
 
     verify(successCallback, times(0)).callback(config);
-    verify(errorCallback, times(1)).callback(any(IDConfig.class), anyLong(), anyString());
+    verify(errorCallback, times(1)).callback(any(IDConfig.class), any(JobletErrorInfo.class));
     verify(failureCallback, times(0)).callback(config);
   }
 

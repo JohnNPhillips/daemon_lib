@@ -12,6 +12,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.io.FileUtils;
 
 import com.liveramp.daemon_lib.DaemonNotifier;
+import com.liveramp.daemon_lib.ErrorCallback;
 import com.liveramp.daemon_lib.JobletCallback;
 import com.liveramp.daemon_lib.JobletConfig;
 import com.liveramp.daemon_lib.JobletFactory;
@@ -39,7 +40,7 @@ public class JobletExecutors {
   public static class Forked {
     private static final int DEFAULT_POLL_DELAY = 1000;
 
-    public static <T extends JobletConfig> ForkedJobletExecutor<T,JobletConfigMetadata,Integer> get(DaemonNotifier notifier, String tmpPath, int maxProcesses, Class<? extends JobletFactory<T>> jobletFactoryClass, Map<String, String> envVariables, JobletCallback<? super T> successCallback, JobletCallback<? super T> failureCallback, ProcessJobletRunner<Integer> jobletRunner) throws IOException, IllegalAccessException, InstantiationException {
+    public static <T extends JobletConfig> ForkedJobletExecutor<T, JobletConfigMetadata, Integer> get(DaemonNotifier notifier, String tmpPath, int maxProcesses, Class<? extends JobletFactory<T>> jobletFactoryClass, Map<String, String> envVariables, JobletCallback<? super T> successCallback, JobletCallback<? super T> failureCallback, ProcessJobletRunner<Integer> jobletRunner) throws IOException, IllegalAccessException, InstantiationException {
       Preconditions.checkArgument(hasNoArgConstructor(jobletFactoryClass), String.format("Class %s has no accessible no-arg constructor", jobletFactoryClass.getName()));
 
       File pidDir = new File(tmpPath, "pids");
@@ -52,7 +53,7 @@ public class JobletExecutors {
           notifier,
           new FsHelper(pidDir.getPath()),
           new LocalProcessPidProcessor(),
-          new JobletProcessHandler<T, Integer, JobletConfigMetadata>(successCallback, failureCallback, configStore, jobletStatusManager),
+          new JobletProcessHandler<T, Integer, JobletConfigMetadata>(successCallback, failureCallback, new ErrorCallback.None<>(), configStore, jobletStatusManager),
           new PsRunningProcessGetter(),
           DEFAULT_POLL_DELAY,
           new JobletConfigMetadata.Serializer()

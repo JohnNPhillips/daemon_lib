@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
+import com.google.common.base.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -39,6 +41,25 @@ public class DefaultJobletStatusManager implements JobletStatusManager {
   }
 
   @Override
+  public Optional<JobletErrorInfo> getErrorInfo(String identifier) {
+    File data = getFile(identifier);
+    try {
+      List<String> lines = IOUtils.readLines(FileUtils.openInputStream(data));
+      if (lines.size() == 3) {
+        return Optional.of(new JobletErrorInfo(Long.parseLong(lines.get(1)), lines.get(2)));
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return Optional.absent();
+  }
+
+  @Override
+  public void saveError(String identifier, long val, String msg) {
+    updateStatus(identifier, JobletStatus.ERROR, new JobletErrorInfo(val, msg));
+  }
+
+  @Override
   public boolean exists(String identifier) {
     return getFile(identifier).exists();
   }
@@ -53,10 +74,18 @@ public class DefaultJobletStatusManager implements JobletStatusManager {
   }
 
   private void updateStatus(String identifier, JobletStatus status) {
+    updateStatus(identifier, status, null);
+  }
+
+  private void updateStatus(String identifier, JobletStatus status, JobletErrorInfo info) {
     File data = getFile(identifier);
     data.delete();
     try (PrintWriter out = new PrintWriter(data)) {
       out.write(status.name());
+      if (info != null) {
+        out.write(Long.toString(info.getCode()));
+        out.write(info.getMessage());
+      }
     } catch (FileNotFoundException e) {
       // This should never happen
       throw new RuntimeException(e);

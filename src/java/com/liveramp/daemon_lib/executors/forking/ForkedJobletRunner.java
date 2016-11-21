@@ -90,7 +90,11 @@ public class ForkedJobletRunner implements ProcessJobletRunner<Integer> {
 
     jobletStatusManager.start(id);
     Joblet joblet = factory.create(config);
-    joblet.run();
+    try {
+      joblet.run();
+    } catch (JobletException e) {
+      jobletStatusManager.saveError(id, e.getErrorInfo().getCode(), e.getErrorInfo().getMessage());
+    }
     jobletStatusManager.complete(id);
   }
 }
