@@ -81,10 +81,10 @@ public class DefaultJobletStatusManager implements JobletStatusManager {
     File data = getFile(identifier);
     data.delete();
     try (PrintWriter out = new PrintWriter(data)) {
-      out.write(status.name());
+      out.println(status.name());
       if (errorInfo != null) {
-        out.write(Long.toString(errorInfo.getCode()));
-        out.write(errorInfo.getMessage());
+        out.println(Long.toString(errorInfo.getCode()));
+        out.println(errorInfo.getMessage());
       }
     } catch (FileNotFoundException e) {
       // This should never happen
