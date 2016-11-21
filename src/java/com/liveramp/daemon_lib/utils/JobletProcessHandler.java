@@ -59,7 +59,7 @@ public class JobletProcessHandler<T extends JobletConfig, Pid, M extends Process
             if (errorInfo.isPresent()) {
               errorCallback.callback(jobletConfig, errorInfo.get());
             } else {
-              LOG.info("The process returned an error, but no error info was found. Executing the failure callback for PID: " + watchedProcess.getPid());
+              LOG.error("The process returned an error, but no error info was found. Executing the failure callback for PID: " + watchedProcess.getPid());
               failureCallback.callback(jobletConfig);
             }
             break;
