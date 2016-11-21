@@ -55,8 +55,8 @@ public class DefaultJobletStatusManager implements JobletStatusManager {
   }
 
   @Override
-  public void saveError(String identifier, long val, String msg) {
-    updateStatus(identifier, JobletStatus.ERROR, new JobletErrorInfo(val, msg));
+  public void saveError(String identifier, JobletErrorInfo errorInfo) {
+    updateStatus(identifier, JobletStatus.ERROR, errorInfo);
   }
 
   @Override
@@ -77,14 +77,14 @@ public class DefaultJobletStatusManager implements JobletStatusManager {
     updateStatus(identifier, status, null);
   }
 
-  private void updateStatus(String identifier, JobletStatus status, JobletErrorInfo info) {
+  private void updateStatus(String identifier, JobletStatus status, JobletErrorInfo errorInfo) {
     File data = getFile(identifier);
     data.delete();
     try (PrintWriter out = new PrintWriter(data)) {
       out.write(status.name());
-      if (info != null) {
-        out.write(Long.toString(info.getCode()));
-        out.write(info.getMessage());
+      if (errorInfo != null) {
+        out.write(Long.toString(errorInfo.getCode()));
+        out.write(errorInfo.getMessage());
       }
     } catch (FileNotFoundException e) {
       // This should never happen

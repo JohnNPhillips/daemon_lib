@@ -11,7 +11,7 @@ public interface JobletStatusManager {
 
   Optional<JobletErrorInfo> getErrorInfo(String identifier);
 
-  void saveError(String identifier, long val, String msg);
+  void saveError(String identifier, JobletErrorInfo errorInfo);
 
   boolean exists(String identifier);
 

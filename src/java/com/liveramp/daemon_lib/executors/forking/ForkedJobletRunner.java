@@ -93,7 +93,7 @@ public class ForkedJobletRunner implements ProcessJobletRunner<Integer> {
     try {
       joblet.run();
     } catch (JobletException e) {
-      jobletStatusManager.saveError(id, e.getErrorInfo().getCode(), e.getErrorInfo().getMessage());
+      jobletStatusManager.saveError(id, e.getErrorInfo());
     }
     jobletStatusManager.complete(id);
   }
