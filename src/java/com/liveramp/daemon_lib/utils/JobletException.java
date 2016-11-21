@@ -6,6 +6,7 @@ public class JobletException extends Exception {
   private JobletErrorInfo errorInfo;
 
   public JobletException(long val, String message) {
+    super(message);
     this.errorInfo = new JobletErrorInfo(val, message);
   }
 
