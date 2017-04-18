@@ -13,14 +13,14 @@ import com.google.common.collect.Lists;
 public class ExecutorConfigSuppliers {
   public static final Path DEFAULT_SUB_PATH = Paths.get("default");
 
-  public static <T extends ExecutorConfig> Supplier<T> standard(Path basePath, Class<T> klass) {
+  public static <T extends ExecutorConfig> Supplier<T> usingFileSystem(Path basePath, Class<T> klass) {
     return new ExecutorConfigSupplier<>(new GsonDeserializer<>(klass), new FileBasedReader(basePath.resolve(DEFAULT_SUB_PATH)));
   }
 
-  public static <T extends ExecutorConfig> Supplier<T> hostBased(Path basePath, Class<T> klass) throws UnknownHostException {
+  public static <T extends ExecutorConfig> Supplier<T> hostBasedUsingFileSystem(Path basePath, Class<T> klass) throws UnknownHostException {
     return fallingBack(
-        standard(basePath.resolve(InetAddress.getLocalHost().getHostName()), klass),
-        standard(basePath.resolve(DEFAULT_SUB_PATH), klass)
+        usingFileSystem(basePath.resolve(InetAddress.getLocalHost().getHostName()), klass),
+        usingFileSystem(basePath.resolve(DEFAULT_SUB_PATH), klass)
     );
   }
 

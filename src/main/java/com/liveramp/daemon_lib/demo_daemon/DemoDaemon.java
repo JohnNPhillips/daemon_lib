@@ -89,7 +89,7 @@ public class DemoDaemon {
         new Factory(),
         new Producer()
     )
-        .setExecutorConfigSupplier(ExecutorConfigSuppliers.standard(Paths.get("/tmp/daemon-info"), ThreadedJobletExecutor.Config.class))
+        .setExecutorConfigSupplier(ExecutorConfigSuppliers.usingFileSystem(Paths.get("/tmp/daemon-info"), ThreadedJobletExecutor.Config.class))
         .setSuccessCallback(new SuccessCallback<>())
         .setFailureCallback(new FailureCallback<>())
         .setConfigWaitSeconds(1)
