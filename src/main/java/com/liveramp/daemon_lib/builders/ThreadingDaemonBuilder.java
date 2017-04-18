@@ -30,7 +30,7 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
     this.jobletFactory = jobletFactory;
 
     this.maxThreads = DEFAULT_MAX_THREADS;
-    this.executorConfigSupplier = () -> new ThreadedJobletExecutor.Config(DEFAULT_MAX_THREADS);
+    this.executorConfigSupplier = null;
 
     this.successCallback = new JobletCallback.None<>();
     this.failureCallback = new JobletCallback.None<>();
@@ -60,7 +60,8 @@ public class ThreadingDaemonBuilder<T extends JobletConfig> extends BaseDaemonBu
   @NotNull
   @Override
   protected JobletExecutor<T> getExecutor() throws IllegalAccessException, IOException, InstantiationException {
-    final Supplier<ThreadedJobletExecutor.Config> configSupplier = ExecutorConfigSuppliers.fallingBack(executorConfigSupplier, () -> new ThreadedJobletExecutor.Config(maxThreads));
-    return JobletExecutors.Threaded.get(jobletFactory, successCallback, failureCallback, configSupplier);
+    final Supplier<ThreadedJobletExecutor.Config> defaultConfigSupplier = () -> new ThreadedJobletExecutor.Config(maxThreads);
+    final Supplier<ThreadedJobletExecutor.Config> compositeConfigSupplier = (executorConfigSupplier != null) ? ExecutorConfigSuppliers.fallingBack(executorConfigSupplier, defaultConfigSupplier) : defaultConfigSupplier;
+    return JobletExecutors.Threaded.get(jobletFactory, successCallback, failureCallback, compositeConfigSupplier);
   }
 }
